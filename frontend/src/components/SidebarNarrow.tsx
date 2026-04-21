@@ -53,15 +53,16 @@ const SidebarNarrow: React.FC = () => {
           display: flex;
           justify-content: center;
           align-items: center;
-          border-radius: 8px;
+          border-radius: 100px;
           margin-bottom: 12px;
           color: var(--text-secondary);
           cursor: pointer;
-          transition: background-color 0.2s;
+          transition: all 0.2s;
         }
 
         .nav-icon:hover {
-          background-color: rgba(255, 255, 255, 0.05);
+          background-color: var(--narrow-sidebar-bg);
+          filter: brightness(0.9);
         }
 
         .nav-icon.active {

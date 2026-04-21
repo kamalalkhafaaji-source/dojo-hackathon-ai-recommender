@@ -41,11 +41,12 @@ const SidebarWide: React.FC = () => {
         }
 
         .menu-item {
-          padding: 8px 12px;
+          padding: 10px 16px;
           margin: 0 12px;
-          border-radius: 8px;
+          border-radius: 100px;
           color: var(--text-secondary);
           font-size: 13px;
+          font-weight: 500;
           text-decoration: none;
           display: block;
           cursor: pointer;
@@ -57,8 +58,8 @@ const SidebarWide: React.FC = () => {
         }
 
         .menu-item.active {
-          background-color: #2a2a2a;
-          color: var(--text-primary);
+          background-color: var(--accent-color);
+          color: white;
         }
       `}</style>
     </nav>

@@ -7,6 +7,7 @@ import { PaymentPlanCard } from './components/PaymentPlanCard';
 import type { PaymentPlan } from './components/PaymentPlanCard';
 import RefineOffers from './components/RefineOffers';
 import SummaryBox from './components/SummaryBox';
+import LoadingSpinner from './components/LoadingSpinner';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
@@ -83,12 +84,19 @@ function App() {
           />
 
           <h2 className="section-title">
-            {data ? `Recommended for ${data.merchant.tradingName}:` : 'Loading recommendations...'}
+            {data ? `Recommended for ${data.merchant.tradingName}:` : 'Finding your best offers...'}
           </h2>
 
           {error && <div className="error-message">Error: {error}</div>}
 
-          <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
+          {!data && isLoading && <LoadingSpinner label="We are fetching your offers" />}
+
+          <div className={`payment-plans ${isLoading && data ? 'loading' : ''}`}>
+            {isLoading && data && (
+              <div className="overlay-spinner">
+                <LoadingSpinner label="Tailoring your results..." />
+              </div>
+            )}
             {plans.map(plan => (
               <PaymentPlanCard 
                 key={plan.id}
@@ -131,11 +139,21 @@ function App() {
           gap: 20px;
           margin-bottom: 40px;
           transition: opacity 0.2s ease;
+          position: relative;
         }
 
         .payment-plans.loading {
-          opacity: 0.5;
+          opacity: 0.3;
           pointer-events: none;
+        }
+
+        .overlay-spinner {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 10;
+          width: 100%;
         }
 
         .bottom-section {
@@ -146,18 +164,19 @@ function App() {
 
         .footer-text {
           margin-top: 40px;
-          margin-bottom: 40px;
+          margin-bottom: 120px;
           color: var(--text-secondary);
           font-size: 12px;
         }
 
         .error-message {
-          color: #ff4d4d;
-          background: rgba(255, 77, 77, 0.1);
+          color: #DC2626;
+          background: rgba(220, 38, 38, 0.05);
           padding: 10px;
           border-radius: 8px;
           margin-bottom: 20px;
           font-size: 14px;
+          border: 1px solid rgba(220, 38, 38, 0.2);
         }
 
         .persona-select {

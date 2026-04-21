@@ -5,6 +5,12 @@ set -e
 
 echo "Starting DOJO AI Recommender Project..."
 
+# Load environment variables from .env file if it exists
+if [ -f .env ]; then
+  echo "Loading environment variables from .env..."
+  export $(grep -v '^#' .env | xargs)
+fi
+
 # Clean up existing processes on known ports
 echo "Checking for existing processes on ports 5000 and 5173..."
 lsof -ti :5000 | xargs kill -9 2>/dev/null || true

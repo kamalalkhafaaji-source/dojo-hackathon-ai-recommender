@@ -61,8 +61,8 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         .plan-card {
           background-color: var(--bg-color);
           border: 1px solid var(--border-color);
-          border-radius: 12px;
-          padding: 20px;
+          border-radius: 20px;
+          padding: 24px;
           display: flex;
           flex-direction: column;
           cursor: pointer;
@@ -70,61 +70,65 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         }
 
         .plan-card:hover {
-          border-color: #444;
+          border-color: #D1D5DB;
         }
 
         .plan-card.active {
           border-color: var(--accent-color);
-          background-color: rgba(39, 105, 85, 0.05);
+          background-color: rgba(25, 98, 84, 0.03);
         }
 
         .plan-header {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
 
         .plan-amount-label {
           color: var(--text-secondary);
-          font-size: 12px;
-          margin-bottom: 4px;
+          font-size: 13px;
+          margin-bottom: 6px;
         }
 
         .plan-amount {
-          font-size: 18px;
-          font-weight: 500;
+          font-size: 20px;
+          font-weight: 600;
         }
 
         .badge {
           background-color: #333;
           color: #fff;
-          padding: 4px 10px;
-          border-radius: 12px;
+          padding: 6px 12px;
+          border-radius: 100px;
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .badge.best-fit {
           background-color: var(--accent-color);
+          color: var(--btn-primary-text);
         }
 
         .plan-details {
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
 
         .detail-row {
-          margin-bottom: 15px;
+          margin-bottom: 16px;
         }
 
         .detail-label {
           color: var(--text-secondary);
-          font-size: 12px;
+          font-size: 13px;
           margin-bottom: 4px;
         }
 
         .detail-value {
-          font-size: 14px;
+          font-size: 15px;
+          font-weight: 500;
         }
 
         .why-fits {
@@ -132,22 +136,22 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         }
 
         .why-fits h4 {
-          font-size: 14px;
-          font-weight: 500;
+          font-size: 15px;
+          font-weight: 600;
           margin-top: 0;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
 
         .why-fits ul {
           margin: 0;
           padding-left: 20px;
           color: var(--text-secondary);
-          font-size: 13px;
-          line-height: 1.5;
+          font-size: 14px;
+          line-height: 1.6;
         }
 
         .why-fits li {
-          margin-bottom: 8px;
+          margin-bottom: 10px;
         }
       `}</style>
     </div>

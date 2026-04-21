@@ -41,19 +41,20 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
       <style>{`
         .summary-box {
           background-color: var(--card-bg);
-          border-radius: 12px;
-          padding: 20px;
+          border-radius: 20px;
+          padding: 24px;
         }
 
         .summary-row {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 10px;
-          font-size: 14px;
+          margin-bottom: 12px;
+          font-size: 15px;
         }
         
         .summary-row.total {
-          margin-bottom: 20px;
+          margin-bottom: 24px;
+          font-weight: 600;
         }
 
         .summary-row .label {
@@ -62,9 +63,10 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
 
         .summary-disclaimer {
           color: var(--text-secondary);
-          font-size: 11px;
+          font-size: 12px;
           text-align: center;
-          margin-bottom: 15px;
+          margin-bottom: 20px;
+          line-height: 1.4;
         }
 
         .no-margin-bottom {

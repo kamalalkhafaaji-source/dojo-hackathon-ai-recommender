@@ -32,12 +32,22 @@ public class OfferOrchestrator : IOfferOrchestrator
         var request = fixture with { UserNeeds = input.UserNeeds };
         var result = await _gemini.GetRecommendationsAsync(request);
 
+        if (result == null || result.Recommendations == null)
+        {
+            throw new Exception("AI service failed to return recommendations.");
+        }
+
+        if (fixture.Merchant?.BusinessProfile == null)
+        {
+            throw new Exception($"Persona data for '{personaKey}' is missing required merchant business profile information.");
+        }
+
         return new EnrichedRecommendationResponse(
             result.Recommendations,
             fixture.Offers.ToDictionary(o => o.OfferId),
             new MerchantSummary(
-                fixture.Merchant.BusinessProfile.TradingName, 
-                fixture.Merchant.BusinessProfile.Industry
+                fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant", 
+                fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
             )
         );
     }
