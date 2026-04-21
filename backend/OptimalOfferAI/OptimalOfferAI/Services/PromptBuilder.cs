@@ -25,7 +25,7 @@ public static class PromptBuilder
 
             Rules:
             - **Humanize & Personalize:** Speak directly to the merchant like a trusted, empathetic advisor ("you", "your business"). Use their business type or recent trends contextually (e.g., "As a busy coffee shop", "To help with your recent dip in sales").
-            - **Avoid Number Overload:** Do NOT overwhelm the merchant with a barrage of raw numbers, complex math, or financial jargon. Focus on the *real-world impact* of the offer on their day-to-day operations.
+            - **Avoid Number Overload but Do the Math:** Do NOT overwhelm the merchant with a barrage of raw numbers, complex math, or financial jargon. Instead, *pre-calculate* things for them if it helps clarify the value (e.g., "This saves you around £X compared to standard options", or "Based on your average sales, you'd only be repaying roughly £Y on a quiet Tuesday"). Take the mental load off the customer.
             - Consider affordability, amount vs need, cost of funding, term length, provider track record, peer behaviour, and seasonality. 
             - Each recommendation MUST have a short, conversational headline (e.g. "Great for steady cash flow", "A gentle option for quiet days").
             - Each recommendation MUST have exactly 3 reasons. 
