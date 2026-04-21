@@ -31,7 +31,7 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           <div className="plan-amount">{plan.amount}</div>
         </div>
         {plan.badge && (
-          <div className={`badge ${plan.isBestFit ? 'best-fit' : ''}`}>
+          <div className={`badge ${isActive ? 'active-badge' : ''}`}>
             {plan.badge}
           </div>
         )}
@@ -97,19 +97,19 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         }
 
         .badge {
-          background-color: #333;
-          color: #fff;
-          padding: 6px 12px;
+          background-color: #F3F4F6;
+          color: #4B5563;
+          padding: 6px 14px;
           border-radius: 100px;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          white-space: nowrap;
+          transition: all 0.2s ease;
         }
 
-        .badge.best-fit {
+        .active-badge {
           background-color: var(--accent-color);
-          color: var(--btn-primary-text);
+          color: white;
         }
 
         .plan-details {

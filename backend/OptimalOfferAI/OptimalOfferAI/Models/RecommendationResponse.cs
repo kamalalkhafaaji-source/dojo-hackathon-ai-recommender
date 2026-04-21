@@ -8,6 +8,7 @@ public record Recommendation(
     string OfferId,
     int Rank,
     string Headline,
-    List<string> Reasons
+    List<string> Reasons,
+    string? Tag = null
 );
 

@@ -56,12 +56,6 @@ const FundingHeader: React.FC<FundingHeaderProps> = ({ maxAmount }) => {
           margin-bottom: 8px;
         }
 
-        .header-desc {
-          color: var(--text-secondary);
-          font-size: 14px;
-          margin-bottom: 10px;
-        }
-
         .header-link {
           color: var(--accent-color);
           text-decoration: none;
