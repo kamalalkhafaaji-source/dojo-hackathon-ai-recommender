@@ -7,10 +7,11 @@ import { PaymentPlanCard } from './components/PaymentPlanCard';
 import type { PaymentPlan } from './components/PaymentPlanCard';
 import RefineOffers from './components/RefineOffers';
 import SummaryBox from './components/SummaryBox';
+import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading, error, refine, changePersona, currentPersona } = useRecommendations();
+  const { data, isLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const plans = useMemo<PaymentPlan[]>(() => {
@@ -87,48 +88,56 @@ function App() {
           )}
 
           <h2 className="section-title">
-            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'Select a persona to get started'}
+            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : error ? 'System Error' : 'Select a persona to get started'}
           </h2>
 
-          {error && <div className="error-message">⚠️ Error: {error}</div>}
+          {error ? (
+            <ErrorMessage 
+              title="Failed to load offers" 
+              message={error} 
+              onRetry={refresh} 
+            />
+          ) : (
+            <>
+              {!isLoading && plans.length === 0 && !error && data && (
+                <div className="empty-state">
+                  <p>No recommendations available. Please select a different persona or try again.</p>
+                </div>
+              )}
 
-          {!isLoading && plans.length === 0 && !error && data && (
-            <div className="empty-state">
-              <p>No recommendations available. Please select a different persona or try again.</p>
-            </div>
+              <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
+                {isLoading ? (
+                  <>
+                    <div className="skeleton-card"></div>
+                    <div className="skeleton-card"></div>
+                    <div className="skeleton-card"></div>
+                  </>
+                ) : (
+                  plans.map(plan => (
+                    <PaymentPlanCard 
+                      key={plan.id}
+                      plan={plan}
+                      isActive={selectedPlanId === plan.id}
+                      onClick={() => setSelectedPlanId(plan.id)}
+                    />
+                  ))
+                )}
+              </div>
+
+              <div className="bottom-section">
+                <RefineOffers onRefine={refine} isLoading={isLoading} />
+                {selectedPlan && selectedOffer && (
+                  <SummaryBox 
+                    fundingAmount={selectedPlan.amount}
+                    fixedFee={formatter.format(selectedOffer.repaymentAmount - selectedOffer.fundingAmount)}
+                    totalToPay={selectedPlan.totalToPay}
+                    onContinue={handleContinue}
+                    onCancel={() => setSelectedPlanId(plans[0]?.id || null)}
+                  />
+                )}
+              </div>
+            </>
           )}
-
-          <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
-            {isLoading ? (
-              <>
-                <div className="skeleton-card"></div>
-                <div className="skeleton-card"></div>
-                <div className="skeleton-card"></div>
-              </>
-            ) : (
-              plans.map(plan => (
-                <PaymentPlanCard 
-                  key={plan.id}
-                  plan={plan}
-                  isActive={selectedPlanId === plan.id}
-                  onClick={() => setSelectedPlanId(plan.id)}
-                />
-              ))
-            )}
-          </div>
-
-          <div className="bottom-section">
-            <RefineOffers onRefine={refine} isLoading={isLoading} />
-            {selectedPlan && selectedOffer && (
-              <SummaryBox 
-                fundingAmount={selectedPlan.amount}
-                fixedFee={formatter.format(selectedOffer.repaymentAmount - selectedOffer.fundingAmount)}
-                totalToPay={selectedPlan.totalToPay}
-                onContinue={handleContinue}
-                onCancel={() => setSelectedPlanId(plans[0]?.id || null)}
-              />
-            )}
-          </div>
 
           <footer className="footer-text">
             If you'd like to discuss your offers, contact us
