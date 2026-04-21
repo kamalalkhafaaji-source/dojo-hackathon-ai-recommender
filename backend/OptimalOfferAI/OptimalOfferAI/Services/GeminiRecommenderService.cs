@@ -73,7 +73,7 @@ public class GeminiRecommenderService
             {
                 Console.WriteLine($"Gemini API: sending request (attempt {attempt}/{maxAttempts})...");
                 var response = await client.Models.GenerateContentAsync(
-                    model: "gemini-2.0-flash",
+                    model: "gemini-2.5-flash",
                     contents: prompt,
                     config: config
                 );
