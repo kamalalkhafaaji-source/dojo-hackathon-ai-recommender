@@ -5,7 +5,6 @@ interface SummaryBoxProps {
   fixedFee: string;
   totalToPay: string;
   onContinue: () => void;
-  onCancel: () => void;
 }
 
 /**
@@ -15,8 +14,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
   fundingAmount,
   fixedFee,
   totalToPay,
-  onContinue,
-  onCancel
+  onContinue
 }) => {
   return (
     <div className="summary-box">
@@ -35,8 +33,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
       
       <div className="summary-disclaimer">No hidden fees - you're completely free to close.</div>
       
-      <button className="btn btn-primary btn-full" onClick={onContinue}>Continue</button>
-      <button className="btn btn-full no-margin-bottom" onClick={onCancel}>Cancel</button>
+      <button className="btn btn-primary btn-full no-margin-bottom" onClick={onContinue}>Continue</button>
 
       <style>{`
         .summary-box {

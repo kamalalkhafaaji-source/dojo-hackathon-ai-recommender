@@ -36,7 +36,7 @@ const FundingInput: React.FC<FundingInputProps> = ({
 
       <style>{`
         .funding-input-section {
-          margin-top: 40px;
+          margin-top: 0;
           margin-bottom: 40px;
         }
 

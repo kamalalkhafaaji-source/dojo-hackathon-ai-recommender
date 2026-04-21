@@ -6,12 +6,13 @@ import FundingInput from './components/FundingInput';
 import { PaymentPlanCard } from './components/PaymentPlanCard';
 import type { PaymentPlan } from './components/PaymentPlanCard';
 import RefineOffers from './components/RefineOffers';
+import RefinementContext from './components/RefinementContext';
 import SummaryBox from './components/SummaryBox';
 import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations('rossis-restaurant');
+  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, currentUserNeeds, refresh } = useRecommendations('rossis-restaurant');
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
@@ -147,6 +148,16 @@ function App() {
             </div>
           )}
 
+          {data && currentUserNeeds && !isLoading && !error && !data.isFallback && (
+            <RefinementContext 
+              needs={currentUserNeeds} 
+              onClear={() => {
+                setSelectedPlanId(null);
+                refine(""); // Clear the needs
+              }}
+            />
+          )}
+
           {error ? (
             <ErrorMessage 
               title="Failed to load offers" 
@@ -188,15 +199,21 @@ function App() {
               </div>
 
               <div className="bottom-section">
-                <RefineOffers onRefine={(needs) => { setSelectedPlanId(null); refine(needs); }} isLoading={isLoading} />
-                {data && <RefineOffers onRefine={refine} isLoading={isLoading} />}
+                {data && (
+                  <RefineOffers 
+                    onRefine={(needs) => { 
+                      setSelectedPlanId(null); 
+                      refine(needs); 
+                    }} 
+                    isLoading={isLoading} 
+                  />
+                )}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
                     fundingAmount={selectedPlan.amount}
                     fixedFee={formatter.format(selectedOffer.repaymentAmount - selectedOffer.fundingAmount)}
                     totalToPay={selectedPlan.totalToPay}
                     onContinue={handleContinue}
-                    onCancel={() => setSelectedPlanId(plans[0]?.id || null)}
                   />
                 )}
               </div>

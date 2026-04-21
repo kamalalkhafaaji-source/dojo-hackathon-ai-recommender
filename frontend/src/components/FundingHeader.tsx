@@ -21,12 +21,11 @@ const FundingHeader: React.FC<FundingHeaderProps> = ({ maxAmount }) => {
           You're eligible for up to £{maxAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })} in business funding.
         </div>
       )}
-      <div className="header-desc">Customise and review your offer.</div>
       <a href="#" className="header-link">Learn how flexible payments work.</a>
 
       <style>{`
         .funding-header {
-          margin-bottom: 40px;
+          margin-bottom: 24px;
         }
 
         .header-logo {
