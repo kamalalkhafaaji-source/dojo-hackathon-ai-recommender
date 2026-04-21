@@ -3,3 +3,6 @@ node_modules/
 .DS_Store
 bin/
 obj/
+/.idea/vcs.xml
+/.idea/indexLayout.xml
+/backend/OptimalOfferAI/.idea/.idea.OptimalOfferAI/.idea/indexLayout.xml

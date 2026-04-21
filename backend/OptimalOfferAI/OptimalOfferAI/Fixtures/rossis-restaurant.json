@@ -1,0 +1,146 @@
+{
+  "merchant": {
+    "businessProfile": {
+      "tradingName": "Rossi's Family Kitchen",
+      "legalType": "LimitedCompany",
+      "mcc": "5812",
+      "industry": "Eating Places / Restaurants",
+      "tradingMonthsOnDojo": 42,
+      "city": "Manchester",
+      "countryIsoAlpha3": "GBR"
+    },
+    "cardTurnover": {
+      "currencyIsoAlpha3": "GBP",
+      "monthlySalesAmount": 65000.00,
+      "trend3mPct": 3.2,
+      "trend12mPct": 15.0,
+      "avgTransactionValue": 34.00,
+      "seasonality": "Steady year-round with peaks around Valentine's Day, Mother's Day, and Christmas party season (November–December)."
+    },
+    "cashFlowSignals": {
+      "peakDays": ["Friday", "Saturday", "Sunday"],
+      "quietDays": ["Monday"],
+      "recentDips": ["No significant recent dips — consistent trading."]
+    },
+    "fundingHistory": [
+      {
+        "provider": "PROVIDER_YOULEND",
+        "product": "PRODUCT_MERCHANT_CASH_ADVANCE",
+        "fundedAmount": 30000.00,
+        "repaymentAmount": 35400.00,
+        "remainingAmount": 0.00,
+        "holdbackPercentage": 10.0,
+        "isRenewed": true
+      },
+      {
+        "provider": "PROVIDER_365",
+        "product": "PRODUCT_MERCHANT_CASH_ADVANCE",
+        "fundedAmount": 20000.00,
+        "repaymentAmount": 24600.00,
+        "remainingAmount": 0.00,
+        "holdbackPercentage": 12.0,
+        "isRenewed": false
+      }
+    ],
+    "peerSignal": {
+      "segment": "Manchester restaurants, £50k–£80k monthly turnover",
+      "typicalAmount": 35000.00,
+      "typicalHoldbackPercentage": 11.0,
+      "typicalTermDays": 250
+    }
+  },
+  "offers": [
+    {
+      "offerId": "yl-201",
+      "provider": "YouLend",
+      "fundingAmount": 40000.00,
+      "repaymentAmount": 47200.00,
+      "holdbackPercentage": 11.0,
+      "daysUntilRepayment": 260,
+      "expirationDate": "2026-04-30T23:59:59Z"
+    },
+    {
+      "offerId": "yl-202",
+      "provider": "YouLend",
+      "fundingAmount": 30000.00,
+      "repaymentAmount": 34500.00,
+      "holdbackPercentage": 9.0,
+      "daysUntilRepayment": 220,
+      "expirationDate": "2026-04-30T23:59:59Z"
+    },
+    {
+      "offerId": "yl-203",
+      "provider": "YouLend",
+      "fundingAmount": 55000.00,
+      "repaymentAmount": 69850.00,
+      "holdbackPercentage": 14.0,
+      "daysUntilRepayment": 310,
+      "expirationDate": "2026-04-30T23:59:59Z"
+    },
+    {
+      "offerId": "365-201",
+      "provider": "365 Business Finance",
+      "fundingAmount": 35000.00,
+      "repaymentAmount": 42000.00,
+      "holdbackPercentage": 12.0,
+      "daysUntilRepayment": 250,
+      "expirationDate": "2026-05-05T23:59:59Z"
+    },
+    {
+      "offerId": "365-202",
+      "provider": "365 Business Finance",
+      "fundingAmount": 50000.00,
+      "repaymentAmount": 65000.00,
+      "holdbackPercentage": 16.0,
+      "daysUntilRepayment": 300,
+      "expirationDate": "2026-05-05T23:59:59Z"
+    },
+    {
+      "offerId": "365-203",
+      "provider": "365 Business Finance",
+      "fundingAmount": 20000.00,
+      "repaymentAmount": 23000.00,
+      "holdbackPercentage": 8.0,
+      "daysUntilRepayment": 180,
+      "expirationDate": "2026-05-05T23:59:59Z"
+    },
+    {
+      "offerId": "yl-204",
+      "provider": "YouLend",
+      "fundingAmount": 70000.00,
+      "repaymentAmount": 94500.00,
+      "holdbackPercentage": 20.0,
+      "daysUntilRepayment": 360,
+      "expirationDate": "2026-04-30T23:59:59Z"
+    },
+    {
+      "offerId": "365-204",
+      "provider": "365 Business Finance",
+      "fundingAmount": 45000.00,
+      "repaymentAmount": 56250.00,
+      "holdbackPercentage": 13.0,
+      "daysUntilRepayment": 280,
+      "expirationDate": "2026-05-05T23:59:59Z"
+    },
+    {
+      "offerId": "yl-205",
+      "provider": "YouLend",
+      "fundingAmount": 25000.00,
+      "repaymentAmount": 28750.00,
+      "holdbackPercentage": 10.0,
+      "daysUntilRepayment": 200,
+      "expirationDate": "2026-04-30T23:59:59Z"
+    },
+    {
+      "offerId": "365-205",
+      "provider": "365 Business Finance",
+      "fundingAmount": 60000.00,
+      "repaymentAmount": 81000.00,
+      "holdbackPercentage": 18.0,
+      "daysUntilRepayment": 340,
+      "expirationDate": "2026-05-05T23:59:59Z"
+    }
+  ],
+  "userNeeds": null
+}
+

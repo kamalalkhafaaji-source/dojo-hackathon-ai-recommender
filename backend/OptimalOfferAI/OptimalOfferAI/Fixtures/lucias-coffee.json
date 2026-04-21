@@ -1,0 +1,137 @@
+{
+  "merchant": {
+    "businessProfile": {
+      "tradingName": "Lucia's Coffee",
+      "legalType": "LimitedCompany",
+      "mcc": "5814",
+      "industry": "Fast Food Restaurants / Coffee Shop",
+      "tradingMonthsOnDojo": 18,
+      "city": "London",
+      "countryIsoAlpha3": "GBR"
+    },
+    "cardTurnover": {
+      "currencyIsoAlpha3": "GBP",
+      "monthlySalesAmount": 42000.00,
+      "trend3mPct": 8.5,
+      "trend12mPct": 22.0,
+      "avgTransactionValue": 6.40,
+      "seasonality": "Peaks slightly in November and December due to holiday footfall."
+    },
+    "cashFlowSignals": {
+      "peakDays": ["Saturday", "Sunday"],
+      "quietDays": ["Monday", "Tuesday"],
+      "recentDips": ["Unexpected 15% drop in sales last week due to local roadworks."]
+    },
+    "fundingHistory": [
+      {
+        "provider": "PROVIDER_YOULEND",
+        "product": "PRODUCT_MERCHANT_CASH_ADVANCE",
+        "fundedAmount": 15000.00,
+        "repaymentAmount": 17850.00,
+        "remainingAmount": 0.00,
+        "holdbackPercentage": 10.0,
+        "isRenewed": true
+      }
+    ],
+    "peerSignal": {
+      "segment": "London coffee shops, £30k–£50k monthly turnover",
+      "typicalAmount": 20000.00,
+      "typicalHoldbackPercentage": 10.0,
+      "typicalTermDays": 210
+    }
+  },
+  "offers": [
+    {
+      "offerId": "yl-001",
+      "provider": "YouLend",
+      "fundingAmount": 25000.00,
+      "repaymentAmount": 29750.00,
+      "holdbackPercentage": 12.0,
+      "daysUntilRepayment": 240,
+      "expirationDate": "2026-04-27T23:59:59Z"
+    },
+    {
+      "offerId": "yl-002",
+      "provider": "YouLend",
+      "fundingAmount": 18000.00,
+      "repaymentAmount": 20700.00,
+      "holdbackPercentage": 10.0,
+      "daysUntilRepayment": 200,
+      "expirationDate": "2026-04-27T23:59:59Z"
+    },
+    {
+      "offerId": "yl-003",
+      "provider": "YouLend",
+      "fundingAmount": 35000.00,
+      "repaymentAmount": 43750.00,
+      "holdbackPercentage": 15.0,
+      "daysUntilRepayment": 300,
+      "expirationDate": "2026-04-27T23:59:59Z"
+    },
+    {
+      "offerId": "365-001",
+      "provider": "365 Business Finance",
+      "fundingAmount": 20000.00,
+      "repaymentAmount": 24000.00,
+      "holdbackPercentage": 11.0,
+      "daysUntilRepayment": 220,
+      "expirationDate": "2026-05-01T23:59:59Z"
+    },
+    {
+      "offerId": "365-002",
+      "provider": "365 Business Finance",
+      "fundingAmount": 30000.00,
+      "repaymentAmount": 37500.00,
+      "holdbackPercentage": 14.0,
+      "daysUntilRepayment": 270,
+      "expirationDate": "2026-05-01T23:59:59Z"
+    },
+    {
+      "offerId": "365-003",
+      "provider": "365 Business Finance",
+      "fundingAmount": 12000.00,
+      "repaymentAmount": 13800.00,
+      "holdbackPercentage": 8.0,
+      "daysUntilRepayment": 180,
+      "expirationDate": "2026-05-01T23:59:59Z"
+    },
+    {
+      "offerId": "yl-004",
+      "provider": "YouLend",
+      "fundingAmount": 40000.00,
+      "repaymentAmount": 52000.00,
+      "holdbackPercentage": 18.0,
+      "daysUntilRepayment": 330,
+      "expirationDate": "2026-04-27T23:59:59Z"
+    },
+    {
+      "offerId": "365-004",
+      "provider": "365 Business Finance",
+      "fundingAmount": 15000.00,
+      "repaymentAmount": 17250.00,
+      "holdbackPercentage": 9.0,
+      "daysUntilRepayment": 190,
+      "expirationDate": "2026-05-01T23:59:59Z"
+    },
+    {
+      "offerId": "yl-005",
+      "provider": "YouLend",
+      "fundingAmount": 22000.00,
+      "repaymentAmount": 25960.00,
+      "holdbackPercentage": 11.0,
+      "daysUntilRepayment": 210,
+      "expirationDate": "2026-04-27T23:59:59Z"
+    },
+    {
+      "offerId": "365-005",
+      "provider": "365 Business Finance",
+      "fundingAmount": 50000.00,
+      "repaymentAmount": 67500.00,
+      "holdbackPercentage": 20.0,
+      "daysUntilRepayment": 360,
+      "expirationDate": "2026-05-01T23:59:59Z"
+    }
+  ],
+  "userNeeds": null
+}
+

@@ -1,0 +1,137 @@
+{
+  "merchant": {
+    "businessProfile": {
+      "tradingName": "The Salty Dog",
+      "legalType": "Partnership",
+      "mcc": "5813",
+      "industry": "Bars / Taverns / Nightclubs",
+      "tradingMonthsOnDojo": 30,
+      "city": "Whitby",
+      "countryIsoAlpha3": "GBR"
+    },
+    "cardTurnover": {
+      "currencyIsoAlpha3": "GBP",
+      "monthlySalesAmount": 28000.00,
+      "trend3mPct": -5.0,
+      "trend12mPct": 12.0,
+      "avgTransactionValue": 18.50,
+      "seasonality": "Highly seasonal — turnover doubles May–September due to coastal tourism. Winter months are quiet."
+    },
+    "cashFlowSignals": {
+      "peakDays": ["Friday", "Saturday"],
+      "quietDays": ["Monday", "Tuesday", "Wednesday"],
+      "recentDips": ["January and February sales 40% below annual average — typical winter dip."]
+    },
+    "fundingHistory": [
+      {
+        "provider": "PROVIDER_365",
+        "product": "PRODUCT_MERCHANT_CASH_ADVANCE",
+        "fundedAmount": 10000.00,
+        "repaymentAmount": 12200.00,
+        "remainingAmount": 3100.00,
+        "holdbackPercentage": 12.0,
+        "isRenewed": false
+      }
+    ],
+    "peerSignal": {
+      "segment": "Coastal bars, £20k–£35k monthly turnover",
+      "typicalAmount": 15000.00,
+      "typicalHoldbackPercentage": 12.0,
+      "typicalTermDays": 240
+    }
+  },
+  "offers": [
+    {
+      "offerId": "yl-101",
+      "provider": "YouLend",
+      "fundingAmount": 15000.00,
+      "repaymentAmount": 18000.00,
+      "holdbackPercentage": 12.0,
+      "daysUntilRepayment": 240,
+      "expirationDate": "2026-04-28T23:59:59Z"
+    },
+    {
+      "offerId": "yl-102",
+      "provider": "YouLend",
+      "fundingAmount": 10000.00,
+      "repaymentAmount": 11500.00,
+      "holdbackPercentage": 9.0,
+      "daysUntilRepayment": 180,
+      "expirationDate": "2026-04-28T23:59:59Z"
+    },
+    {
+      "offerId": "yl-103",
+      "provider": "YouLend",
+      "fundingAmount": 25000.00,
+      "repaymentAmount": 32500.00,
+      "holdbackPercentage": 16.0,
+      "daysUntilRepayment": 300,
+      "expirationDate": "2026-04-28T23:59:59Z"
+    },
+    {
+      "offerId": "365-101",
+      "provider": "365 Business Finance",
+      "fundingAmount": 12000.00,
+      "repaymentAmount": 14400.00,
+      "holdbackPercentage": 10.0,
+      "daysUntilRepayment": 210,
+      "expirationDate": "2026-05-02T23:59:59Z"
+    },
+    {
+      "offerId": "365-102",
+      "provider": "365 Business Finance",
+      "fundingAmount": 20000.00,
+      "repaymentAmount": 25000.00,
+      "holdbackPercentage": 14.0,
+      "daysUntilRepayment": 270,
+      "expirationDate": "2026-05-02T23:59:59Z"
+    },
+    {
+      "offerId": "365-103",
+      "provider": "365 Business Finance",
+      "fundingAmount": 8000.00,
+      "repaymentAmount": 9040.00,
+      "holdbackPercentage": 8.0,
+      "daysUntilRepayment": 150,
+      "expirationDate": "2026-05-02T23:59:59Z"
+    },
+    {
+      "offerId": "yl-104",
+      "provider": "YouLend",
+      "fundingAmount": 30000.00,
+      "repaymentAmount": 40500.00,
+      "holdbackPercentage": 18.0,
+      "daysUntilRepayment": 330,
+      "expirationDate": "2026-04-28T23:59:59Z"
+    },
+    {
+      "offerId": "365-104",
+      "provider": "365 Business Finance",
+      "fundingAmount": 18000.00,
+      "repaymentAmount": 21960.00,
+      "holdbackPercentage": 13.0,
+      "daysUntilRepayment": 250,
+      "expirationDate": "2026-05-02T23:59:59Z"
+    },
+    {
+      "offerId": "yl-105",
+      "provider": "YouLend",
+      "fundingAmount": 20000.00,
+      "repaymentAmount": 24000.00,
+      "holdbackPercentage": 11.0,
+      "daysUntilRepayment": 220,
+      "expirationDate": "2026-04-28T23:59:59Z"
+    },
+    {
+      "offerId": "365-105",
+      "provider": "365 Business Finance",
+      "fundingAmount": 35000.00,
+      "repaymentAmount": 47250.00,
+      "holdbackPercentage": 20.0,
+      "daysUntilRepayment": 360,
+      "expirationDate": "2026-05-02T23:59:59Z"
+    }
+  ],
+  "userNeeds": null
+}
+
