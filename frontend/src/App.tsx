@@ -161,6 +161,13 @@ function App() {
                 </div>
               )}
 
+              {!isLoading && data?.aiWarning && (
+                <div className="ai-warning-banner">
+                  <span className="ai-warning-icon">⚠️</span>
+                  <span>{data.aiWarning}</span>
+                </div>
+              )}
+
               <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
                 {isLoading ? (
                   <>
@@ -181,6 +188,7 @@ function App() {
               </div>
 
               <div className="bottom-section">
+                <RefineOffers onRefine={(needs) => { setSelectedPlanId(null); refine(needs); }} isLoading={isLoading} />
                 {data && <RefineOffers onRefine={refine} isLoading={isLoading} />}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
@@ -293,6 +301,25 @@ function App() {
           padding: 40px 20px;
           text-align: center;
           color: var(--text-secondary);
+        }
+
+        .ai-warning-banner {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          background: rgba(234, 179, 8, 0.08);
+          border: 1px solid rgba(234, 179, 8, 0.4);
+          border-radius: 10px;
+          padding: 12px 16px;
+          margin-bottom: 20px;
+          font-size: 13px;
+          color: #92400e;
+          line-height: 1.5;
+        }
+
+        .ai-warning-icon {
+          flex-shrink: 0;
+          margin-top: 1px;
         }
 
         .persona-select {

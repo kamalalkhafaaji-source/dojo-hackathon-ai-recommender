@@ -35,15 +35,29 @@ public class OfferOrchestrator : IOfferOrchestrator
         }
 
         var request = fixture with { UserNeeds = input.UserNeeds };
-        var result = await _gemini.GetRecommendationsAsync(request);
+
+        // Use more attempts for refinement requests since the user has expressed specific needs
+        var isRefinement = !string.IsNullOrWhiteSpace(input.UserNeeds);
+        var maxAttempts = isRefinement ? 3 : 2;
+
+        var result = await _gemini.GetRecommendationsAsync(request, maxAttempts);
 
         // If AI service fails, generate fallback recommendations based on highest funding amount
         List<Recommendation> recommendations;
+        string? aiWarning = null;
+
         bool isFallback = false;
         if (result == null || result.Recommendations == null || result.Recommendations.Count == 0)
         {
             Console.WriteLine($"AI service unavailable. Generating fallback recommendations for {personaKey}.");
             recommendations = GenerateFallbackRecommendations(fixture.Offers);
+
+            if (isRefinement)
+            {
+                aiWarning = "We weren't able to tailor these offers to your specific request right now. " +
+                            "We're showing our top offers by funding amount instead. " +
+                            "Please try refining again in a moment.";
+            }
             isFallback = true;
         }
         else
@@ -55,9 +69,10 @@ public class OfferOrchestrator : IOfferOrchestrator
             recommendations,
             fixture.Offers.ToDictionary(o => o.OfferId),
             new MerchantSummary(
-                fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant", 
+                fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant",
                 fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
             ),
+            aiWarning
             IsFallback: isFallback
         );
     }

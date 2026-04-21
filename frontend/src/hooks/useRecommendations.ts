@@ -8,6 +8,7 @@ export function useRecommendations(initialPersona?: string) {
   const [error, setError] = useState<string | null>(null);
   const [persona, setPersona] = useState<string | undefined>(initialPersona);
   const [userNeeds, setUserNeeds] = useState<string | undefined>();
+  const [refineTrigger, setRefineTrigger] = useState(0);
 
   const getRecommendations = useCallback(async (p?: string, needs?: string) => {
     // Don't fetch if no persona is selected
@@ -18,6 +19,7 @@ export function useRecommendations(initialPersona?: string) {
 
     setIsLoading(true);
     setError(null);
+    setData(null); // Clear existing data so skeletons show during reload
     try {
       const result = await fetchRecommendations({ persona: p, userNeeds: needs });
       setData(result);
@@ -33,15 +35,18 @@ export function useRecommendations(initialPersona?: string) {
 
   useEffect(() => {
     getRecommendations(persona, userNeeds);
-  }, [persona, userNeeds, getRecommendations]);
+  }, [persona, userNeeds, refineTrigger, getRecommendations]);
 
   const refine = (needs: string) => {
     setUserNeeds(needs);
+    // Force re-fetch even when the same refine text is submitted repeatedly.
+    setRefineTrigger((prev) => prev + 1);
   };
 
   const changePersona = (newPersona: string) => {
     setPersona(newPersona);
     setUserNeeds(undefined); // Reset needs when persona changes
+    setRefineTrigger(0);
   };
 
   return {
