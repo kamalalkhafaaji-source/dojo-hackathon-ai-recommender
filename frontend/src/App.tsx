@@ -45,7 +45,9 @@ function App() {
           `Funding amount: £${offer.fundingAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
           `Repayment: £${offer.repaymentAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })} at ${offer.holdbackPercentage}% sweep`,
           `Estimated term: ${offer.daysUntilRepayment} days`
-        ]
+        ],
+        repaymentTerm: offer.daysUntilRepayment.toString(),
+        expirationDate: offer.expirationDate
       }));
     }
     
@@ -58,6 +60,8 @@ function App() {
         amount: formatter.format(offer.fundingAmount),
         totalToPay: formatter.format(offer.repaymentAmount),
         paymentLabel: `${offer.holdbackPercentage}% of daily sales`,
+        repaymentTerm: offer.daysUntilRepayment.toString(),
+        expirationDate: offer.expirationDate,
         badge: rec.tag || (rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd'),
         isBestFit: rec.rank === 1,
         reasons: rec.reasons

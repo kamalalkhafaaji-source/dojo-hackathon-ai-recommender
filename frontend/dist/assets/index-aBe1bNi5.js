@@ -100,9 +100,9 @@ Error generating stack: `+e.message+`
           background-color: var(--accent-color);
           color: white;
         }
-      `})]}),C=()=>(0,b.jsxs)(`header`,{className:`funding-header`,children:[(0,b.jsxs)(`div`,{className:`header-logo`,children:[(0,b.jsx)(`h1`,{children:`DOJO`}),(0,b.jsx)(`span`,{className:`logo-divider`,children:`X`}),(0,b.jsx)(`h1`,{className:`logo-partner`,children:`Y O U L E N D`})]}),(0,b.jsx)(`div`,{className:`header-subtitle`,children:`You're eligible for up to £15,000 in business funding.`}),(0,b.jsx)(`a`,{href:`#`,className:`header-link`,children:`Learn how flexible payments work.`}),(0,b.jsx)(`style`,{children:`
+      `})]}),C=({maxAmount:e})=>(0,b.jsxs)(`header`,{className:`funding-header`,children:[(0,b.jsxs)(`div`,{className:`header-logo`,children:[(0,b.jsx)(`h1`,{children:`DOJO`}),(0,b.jsx)(`span`,{className:`logo-divider`,children:`X`}),(0,b.jsx)(`h1`,{className:`logo-partner`,children:`Y O U L E N D`})]}),e!==void 0&&(0,b.jsxs)(`div`,{className:`header-subtitle`,children:[`You're eligible for up to £`,e.toLocaleString(`en-GB`,{maximumFractionDigits:0}),` in business funding.`]}),(0,b.jsx)(`a`,{href:`#`,className:`header-link`,children:`Learn how flexible payments work.`}),(0,b.jsx)(`style`,{children:`
         .funding-header {
-          margin-bottom: 40px;
+          margin-bottom: 24px;
         }
 
         .header-logo {
@@ -137,9 +137,9 @@ Error generating stack: `+e.message+`
           text-decoration: none;
           font-size: 14px;
         }
-      `})]}),te=({amount:e,min:t=6e3,max:n=25e3,onChange:r,onConfirm:i})=>(0,b.jsxs)(`section`,{className:`funding-input-section`,children:[(0,b.jsx)(`h2`,{children:`How much funding would you like?`}),(0,b.jsxs)(`div`,{className:`input-group`,children:[(0,b.jsx)(`input`,{type:`number`,className:`number-input`,value:e,onChange:e=>r(Number(e.target.value)),min:t,max:n}),(0,b.jsxs)(`span`,{className:`input-hint`,children:[`From £`,t.toLocaleString(),`.00 to £`,n.toLocaleString(),`.00`]}),(0,b.jsx)(`button`,{className:`btn confirm-btn`,onClick:i,children:`Confirm`})]}),(0,b.jsx)(`style`,{children:`
+      `})]}),te=({amount:e,min:t=6e3,max:n=25e3,onChange:r,onConfirm:i})=>(0,b.jsxs)(`section`,{className:`funding-input-section`,children:[(0,b.jsx)(`h2`,{children:`How much funding would you like?`}),(0,b.jsxs)(`div`,{className:`input-group`,children:[(0,b.jsx)(`input`,{type:`number`,className:`number-input`,value:e,onChange:e=>r(Number(e.target.value)),min:t,max:n}),(0,b.jsxs)(`span`,{className:`input-hint`,children:[`From £`,t.toLocaleString(`en-GB`,{maximumFractionDigits:0}),` to £`,n.toLocaleString(`en-GB`,{maximumFractionDigits:0})]}),(0,b.jsx)(`button`,{className:`btn confirm-btn`,onClick:i,children:`Confirm`})]}),(0,b.jsx)(`style`,{children:`
         .funding-input-section {
-          margin-top: 40px;
+          margin-top: 0;
           margin-bottom: 40px;
         }
 
@@ -175,7 +175,7 @@ Error generating stack: `+e.message+`
         .confirm-btn {
           margin-top: 5px;
         }
-      `})]}),ne=({plan:e,isActive:t,onClick:n})=>(0,b.jsxs)(`div`,{className:`plan-card ${t?`active`:``}`,onClick:n,children:[(0,b.jsxs)(`div`,{className:`plan-header`,children:[(0,b.jsxs)(`div`,{children:[(0,b.jsx)(`div`,{className:`plan-amount-label`,children:`Funding amount`}),(0,b.jsx)(`div`,{className:`plan-amount`,children:e.amount})]}),e.badge&&(0,b.jsx)(`div`,{className:`badge ${e.isBestFit?`best-fit`:``}`,children:e.badge})]}),(0,b.jsxs)(`div`,{className:`plan-details`,children:[(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Total to pay`}),(0,b.jsx)(`div`,{className:`detail-value`,children:e.totalToPay})]}),(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Payment`}),(0,b.jsx)(`div`,{className:`detail-value`,children:e.paymentLabel})]})]}),(0,b.jsxs)(`div`,{className:`why-fits`,children:[(0,b.jsx)(`h4`,{children:`Why this fits you`}),(0,b.jsx)(`ul`,{children:e.reasons.map((e,t)=>(0,b.jsx)(`li`,{children:e},t))})]}),(0,b.jsx)(`style`,{children:`
+      `})]}),ne=({plan:e,isActive:t,onClick:n})=>(0,b.jsxs)(`div`,{className:`plan-card ${t?`active`:``}`,onClick:n,children:[(0,b.jsxs)(`div`,{className:`plan-header`,children:[(0,b.jsxs)(`div`,{children:[(0,b.jsx)(`div`,{className:`plan-amount-label`,children:`Funding amount`}),(0,b.jsx)(`div`,{className:`plan-amount`,children:e.amount})]}),e.badge&&(0,b.jsx)(`div`,{className:`badge ${t?`active-badge`:``}`,children:e.badge})]}),(0,b.jsxs)(`div`,{className:`plan-details`,children:[(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Total to pay`}),(0,b.jsx)(`div`,{className:`detail-value`,children:e.totalToPay})]}),(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Payment`}),(0,b.jsx)(`div`,{className:`detail-value`,children:e.paymentLabel})]}),(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Repayment term`}),(0,b.jsxs)(`div`,{className:`detail-value`,children:[`~`,e.repaymentTerm,` days`]})]}),(0,b.jsxs)(`div`,{className:`detail-row`,children:[(0,b.jsx)(`div`,{className:`detail-label`,children:`Offer expires`}),(0,b.jsx)(`div`,{className:`detail-value`,children:e.expirationDate})]})]}),(0,b.jsxs)(`div`,{className:`why-fits`,children:[(0,b.jsx)(`h4`,{children:`Why this fits you`}),(0,b.jsx)(`ul`,{children:e.reasons.map((e,t)=>(0,b.jsx)(`li`,{children:e},t))})]}),(0,b.jsx)(`style`,{children:`
         .plan-card {
           background-color: var(--bg-color);
           border: 1px solid var(--border-color);
@@ -215,19 +215,19 @@ Error generating stack: `+e.message+`
         }
 
         .badge {
-          background-color: #333;
-          color: #fff;
-          padding: 6px 12px;
+          background-color: #F3F4F6;
+          color: #4B5563;
+          padding: 6px 14px;
           border-radius: 100px;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          white-space: nowrap;
+          transition: all 0.2s ease;
         }
 
-        .badge.best-fit {
+        .active-badge {
           background-color: var(--accent-color);
-          color: var(--btn-primary-text);
+          color: white;
         }
 
         .plan-details {
@@ -314,7 +314,72 @@ Error generating stack: `+e.message+`
         .no-margin-bottom {
           margin-bottom: 0 !important;
         }
-      `})]})},w=({fundingAmount:e,fixedFee:t,totalToPay:n,onContinue:r,onCancel:i})=>(0,b.jsxs)(`div`,{className:`summary-box`,children:[(0,b.jsxs)(`div`,{className:`summary-row`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Funding amount`}),(0,b.jsx)(`span`,{children:e})]}),(0,b.jsxs)(`div`,{className:`summary-row`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Fixed fee`}),(0,b.jsx)(`span`,{children:t})]}),(0,b.jsxs)(`div`,{className:`summary-row total`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Total to pay`}),(0,b.jsx)(`span`,{children:n})]}),(0,b.jsx)(`div`,{className:`summary-disclaimer`,children:`No hidden fees - you're completely free to close.`}),(0,b.jsx)(`button`,{className:`btn btn-primary btn-full`,onClick:r,children:`Continue`}),(0,b.jsx)(`button`,{className:`btn btn-full no-margin-bottom`,onClick:i,children:`Cancel`}),(0,b.jsx)(`style`,{children:`
+      `})]})},w=({needs:e,onClear:t})=>(0,b.jsxs)(`div`,{className:`refinement-banner`,children:[(0,b.jsxs)(`div`,{className:`banner-content`,children:[(0,b.jsxs)(`div`,{className:`banner-header`,children:[(0,b.jsx)(`span`,{className:`sparkle`,children:`✨`}),(0,b.jsx)(`h3`,{children:`Refined for your specific needs`})]}),(0,b.jsxs)(`p`,{className:`needs-text`,children:[`"`,e,`"`]})]}),t&&(0,b.jsx)(`button`,{className:`clear-btn`,onClick:t,children:`Reset`}),(0,b.jsx)(`style`,{children:`
+        .refinement-banner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: var(--accent-color);
+          color: white;
+          padding: 16px 24px;
+          border-radius: 20px;
+          margin-bottom: 24px;
+          box-shadow: 0 4px 12px rgba(25, 98, 84, 0.15);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          animation: slideDown 0.4s ease-out;
+        }
+
+        .banner-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 2px;
+        }
+
+        .banner-header h3 {
+          margin: 0;
+          font-size: 13px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          opacity: 0.85;
+        }
+
+        .sparkle {
+          font-size: 14px;
+        }
+
+        .needs-text {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 1.4;
+        }
+
+        .clear-btn {
+          background: rgba(255, 255, 255, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: white;
+          padding: 8px 18px;
+          border-radius: 100px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-left: 20px;
+          flex-shrink: 0;
+        }
+
+        .clear-btn:hover {
+          background: rgba(255, 255, 255, 0.25);
+          border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `})]}),ie=({fundingAmount:e,fixedFee:t,totalToPay:n,onContinue:r})=>(0,b.jsxs)(`div`,{className:`summary-box`,children:[(0,b.jsxs)(`div`,{className:`summary-row`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Funding amount`}),(0,b.jsx)(`span`,{children:e})]}),(0,b.jsxs)(`div`,{className:`summary-row`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Fixed fee`}),(0,b.jsx)(`span`,{children:t})]}),(0,b.jsxs)(`div`,{className:`summary-row total`,children:[(0,b.jsx)(`span`,{className:`label`,children:`Total to pay`}),(0,b.jsx)(`span`,{children:n})]}),(0,b.jsx)(`div`,{className:`summary-disclaimer`,children:`No hidden fees - you're completely free to close.`}),(0,b.jsx)(`button`,{className:`btn btn-primary btn-full no-margin-bottom`,onClick:r,children:`Continue`}),(0,b.jsx)(`style`,{children:`
         .summary-box {
           background-color: var(--card-bg);
           border-radius: 20px;
@@ -348,7 +413,7 @@ Error generating stack: `+e.message+`
         .no-margin-bottom {
           margin-bottom: 0 !important;
         }
-      `})]}),ie=({title:e=`Something went wrong`,message:t,onRetry:n})=>(0,b.jsxs)(`div`,{className:`error-container`,children:[(0,b.jsx)(`div`,{className:`error-icon`,children:`⚠️`}),(0,b.jsx)(`h3`,{className:`error-title`,children:e}),(0,b.jsx)(`p`,{className:`error-text`,children:t}),n&&(0,b.jsx)(`button`,{className:`btn btn-primary`,onClick:n,children:`Try again`}),(0,b.jsx)(`style`,{children:`
+      `})]}),ae=({title:e=`Something went wrong`,message:t,onRetry:n})=>(0,b.jsxs)(`div`,{className:`error-container`,children:[(0,b.jsx)(`div`,{className:`error-icon`,children:`⚠️`}),(0,b.jsx)(`h3`,{className:`error-title`,children:e}),(0,b.jsx)(`p`,{className:`error-text`,children:t}),n&&(0,b.jsx)(`button`,{className:`btn btn-primary`,onClick:n,children:`Try again`}),(0,b.jsx)(`style`,{children:`
         .error-container {
           background-color: #FFF5F5;
           border: 1px solid #FED7D7;
@@ -385,11 +450,38 @@ Error generating stack: `+e.message+`
         .error-container .btn {
           margin-top: 8px;
         }
-      `})]}),ae=`http://localhost:5000`;async function oe(e){try{let t=await fetch(`${ae}/Recommendations`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!t.ok){let e=t.statusText;try{let n=await t.json();e=n.detail||n.message||e}catch{}throw Error(`Failed to fetch recommendations (${t.status}): ${e}`)}return t.json()}catch(e){throw e instanceof TypeError&&e.message.includes(`fetch`)?Error(`Unable to connect to API at ${ae}. Please ensure the backend is running.`):e}}function se(e){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(null),[s,c]=(0,_.useState)(e),[l,u]=(0,_.useState)(),d=(0,_.useCallback)(async(e,t)=>{if(!e){n(null);return}i(!0),o(null);try{n(await oe({persona:e,userNeeds:t}))}catch(e){let t=e instanceof Error?e.message:`An unknown error occurred`;o(t),console.error(`Failed to fetch recommendations:`,t),n(null)}finally{i(!1)}},[]);return(0,_.useEffect)(()=>{d(s,l)},[s,l,d]),{data:t,isLoading:r,error:a,refine:e=>{u(e)},changePersona:e=>{c(e),u(void 0)},currentPersona:s,currentUserNeeds:l,refresh:()=>d(s,l)}}function ce(){let{data:e,isLoading:t,error:n,refine:r,changePersona:i,currentPersona:a,refresh:o}=se(`rossis-restaurant`),[s,c]=(0,_.useState)(null),[l,u]=(0,_.useState)(``),[d,f]=(0,_.useState)(null),[p,m]=(0,_.useState)(!1),h=t||p;(0,_.useEffect)(()=>{f(null),u(``)},[e]);let g=(0,_.useMemo)(()=>{if(!e)return[];let t=e.recommendations;return d!==null&&(t=[...Object.values(e.offers)].sort((e,t)=>Math.abs(e.fundingAmount-d)-Math.abs(t.fundingAmount-d)).slice(0,3).map((e,t)=>({offerId:e.offerId,rank:t+1,headline:t===0?`Closest match to £${d.toLocaleString()}`:`Alternative option`,reasons:[`Funding amount: £${e.fundingAmount.toLocaleString()}`,`Repayment: £${e.repaymentAmount.toLocaleString()} at ${e.holdbackPercentage}% sweep`,`Estimated term: ${e.daysUntilRepayment} days`]}))),t.map(t=>{let n=e.offers[t.offerId],r=new Intl.NumberFormat(`en-GB`,{style:`currency`,currency:`GBP`});return{id:t.offerId,amount:r.format(n.fundingAmount),totalToPay:r.format(n.repaymentAmount),paymentLabel:`${n.holdbackPercentage}% of daily sales`,badge:t.tag||(t.rank===1?`Best fit`:t.rank===2?`2nd`:`3rd`),isBestFit:t.rank===1,reasons:t.reasons}})},[e,d]);(0,_.useMemo)(()=>{g.length>0&&(!s||!g.find(e=>e.id===s))&&c(g[0].id)},[g,s]);let v=g.find(e=>e.id===s)||g[0],y=e?.offers[s||``]||(e?Object.values(e.offers)[0]:null),x=()=>{v&&alert(`Continuing with ${v.paymentLabel} plan!`)},ae=new Intl.NumberFormat(`en-GB`,{style:`currency`,currency:`GBP`}),oe=l===``?y?.fundingAmount||0:l;return(0,b.jsxs)(`div`,{className:`app-layout`,children:[(0,b.jsx)(ee,{}),(0,b.jsx)(S,{}),(0,b.jsx)(`main`,{className:`main-content`,children:(0,b.jsxs)(`div`,{className:`container`,children:[(0,b.jsxs)(`div`,{style:{display:`flex`,justifyContent:`space-between`,alignItems:`center`},children:[(0,b.jsx)(C,{}),(0,b.jsxs)(`div`,{style:{display:`flex`,gap:`10px`,alignItems:`center`},children:[(0,b.jsx)(`span`,{style:{fontSize:`12px`,color:`var(--text-secondary)`},children:`Persona:`}),(0,b.jsxs)(`select`,{value:a||``,onChange:e=>{i(e.target.value),c(null)},className:`persona-select`,disabled:h,children:[(0,b.jsx)(`option`,{value:`rossis-restaurant`,children:`Rossi's Restaurant`}),(0,b.jsx)(`option`,{value:`lucias-coffee`,children:`Lucia's Coffee`}),(0,b.jsx)(`option`,{value:`salty-dog-bar`,children:`Salty Dog Bar`})]})]})]}),e&&(0,b.jsx)(te,{amount:oe,onChange:e=>u(e),onConfirm:()=>{l!==``&&l!==d&&(m(!0),setTimeout(()=>{f(Number(l)),c(null),m(!1)},500))}}),(0,b.jsx)(`h2`,{className:`section-title`,children:h&&!e?`Finding your best offers...`:e?`Recommended for ${e.merchant.tradingName}:`:`System Error`}),n?(0,b.jsx)(ie,{title:`Failed to load offers`,message:n,onRetry:o}):(0,b.jsxs)(b.Fragment,{children:[!h&&g.length===0&&!n&&e&&(0,b.jsx)(`div`,{className:`empty-state`,children:(0,b.jsx)(`p`,{children:`No recommendations available. Please select a different persona or try again.`})}),(0,b.jsx)(`div`,{className:`payment-plans ${h?`loading`:``}`,children:h?(0,b.jsxs)(b.Fragment,{children:[(0,b.jsx)(`div`,{className:`skeleton-card`}),(0,b.jsx)(`div`,{className:`skeleton-card`}),(0,b.jsx)(`div`,{className:`skeleton-card`})]}):g.map(e=>(0,b.jsx)(ne,{plan:e,isActive:s===e.id,onClick:()=>c(e.id)},e.id))}),(0,b.jsxs)(`div`,{className:`bottom-section`,children:[e&&(0,b.jsx)(re,{onRefine:r,isLoading:h}),v&&y&&(0,b.jsx)(w,{fundingAmount:v.amount,fixedFee:ae.format(y.repaymentAmount-y.fundingAmount),totalToPay:v.totalToPay,onContinue:x,onCancel:()=>c(g[0]?.id||null)})]})]}),(0,b.jsx)(`footer`,{className:`footer-text`,children:`If you'd like to discuss your offers, contact us`})]})}),(0,b.jsx)(`style`,{children:`
+      `})]}),oe=`http://localhost:5000`;async function se(e){try{let t=await fetch(`${oe}/Recommendations`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!t.ok){let e=t.statusText;try{let n=await t.json();e=n.detail||n.message||e}catch{}throw Error(`Failed to fetch recommendations (${t.status}): ${e}`)}return t.json()}catch(e){throw e instanceof TypeError&&e.message.includes(`fetch`)?Error(`Unable to connect to API at ${oe}. Please ensure the backend is running.`):e}}function ce(e){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(null),[s,c]=(0,_.useState)(e),[l,u]=(0,_.useState)(),[d,f]=(0,_.useState)(0),p=(0,_.useCallback)(async(e,t)=>{if(!e){n(null);return}i(!0),o(null),n(null);try{n(await se({persona:e,userNeeds:t}))}catch(e){let t=e instanceof Error?e.message:`An unknown error occurred`;o(t),console.error(`Failed to fetch recommendations:`,t),n(null)}finally{i(!1)}},[]);return(0,_.useEffect)(()=>{p(s,l)},[s,l,d,p]),{data:t,isLoading:r,error:a,refine:e=>{u(e),f(e=>e+1)},changePersona:e=>{c(e),u(void 0),f(0)},currentPersona:s,currentUserNeeds:l,refresh:()=>p(s,l)}}function le(){let{data:e,isLoading:t,error:n,refine:r,changePersona:i,currentPersona:a,currentUserNeeds:o,refresh:s}=ce(`rossis-restaurant`),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(``),[f,p]=(0,_.useState)(null),[m,h]=(0,_.useState)(!1),g=t||m;(0,_.useEffect)(()=>{p(null),d(``)},[e]);let v=(0,_.useMemo)(()=>{if(!e)return[];let t=e.recommendations;return f!==null&&(t=[...Object.values(e.offers)].sort((e,t)=>Math.abs(e.fundingAmount-f)-Math.abs(t.fundingAmount-f)).slice(0,3).map((e,t)=>({offerId:e.offerId,rank:t+1,headline:t===0?`Closest match to £${f.toLocaleString(`en-GB`,{maximumFractionDigits:0})}`:`Alternative option`,reasons:[`Funding amount: £${e.fundingAmount.toLocaleString(`en-GB`,{maximumFractionDigits:0})}`,`Repayment: £${e.repaymentAmount.toLocaleString(`en-GB`,{maximumFractionDigits:0})} at ${e.holdbackPercentage}% sweep`,`Estimated term: ${e.daysUntilRepayment} days`],repaymentTerm:e.daysUntilRepayment.toString(),expirationDate:e.expirationDate}))),t.map(t=>{let n=e.offers[t.offerId],r=new Intl.NumberFormat(`en-GB`,{style:`currency`,currency:`GBP`,maximumFractionDigits:0});return{id:t.offerId,amount:r.format(n.fundingAmount),totalToPay:r.format(n.repaymentAmount),paymentLabel:`${n.holdbackPercentage}% of daily sales`,repaymentTerm:n.daysUntilRepayment.toString(),expirationDate:n.expirationDate,badge:t.tag||(t.rank===1?`Best fit`:t.rank===2?`2nd`:`3rd`),isBestFit:t.rank===1,reasons:t.reasons}})},[e,f]);(0,_.useMemo)(()=>{v.length>0&&(!c||!v.find(e=>e.id===c))&&l(v[0].id)},[v,c]);let y=v.find(e=>e.id===c)||v[0],x=e?.offers[c||``]||(e?Object.values(e.offers)[0]:null),oe=()=>{y&&alert(`Continuing with ${y.paymentLabel} plan!`)},se=new Intl.NumberFormat(`en-GB`,{style:`currency`,currency:`GBP`,maximumFractionDigits:0}),le=u===``?x?.fundingAmount||0:u,ue=e?Math.min(...Object.values(e.offers).map(e=>e.fundingAmount)):6e3,T=e?Math.max(...Object.values(e.offers).map(e=>e.fundingAmount)):25e3;return(0,b.jsxs)(`div`,{className:`app-layout`,children:[(0,b.jsx)(ee,{}),(0,b.jsx)(S,{}),(0,b.jsx)(`main`,{className:`main-content`,children:(0,b.jsxs)(`div`,{className:`container`,children:[(0,b.jsxs)(`div`,{style:{display:`flex`,justifyContent:`space-between`,alignItems:`center`},children:[(0,b.jsx)(C,{maxAmount:!g&&e?T:void 0}),(0,b.jsxs)(`div`,{style:{display:`flex`,gap:`10px`,alignItems:`center`},children:[(0,b.jsx)(`span`,{style:{fontSize:`12px`,color:`var(--text-secondary)`},children:`Persona:`}),(0,b.jsxs)(`select`,{value:a||``,onChange:e=>{i(e.target.value),l(null)},className:`persona-select`,disabled:g,children:[(0,b.jsx)(`option`,{value:`rossis-restaurant`,children:`Rossi's Restaurant`}),(0,b.jsx)(`option`,{value:`lucias-coffee`,children:`Lucia's Coffee`}),(0,b.jsx)(`option`,{value:`salty-dog-bar`,children:`Salty Dog Bar`})]})]})]}),e&&(0,b.jsx)(te,{amount:le,min:ue,max:T,onChange:e=>d(e),onConfirm:()=>{u!==``&&u!==f&&(h(!0),setTimeout(()=>{p(Number(u)),l(null),h(!1)},500))}}),(0,b.jsx)(`h2`,{className:`section-title`,children:g&&!e?`Finding your best offers...`:e?`Recommended for ${e.merchant.tradingName}:`:`System Error`}),e&&!g&&!n&&(0,b.jsx)(`div`,{className:`ai-status-badge ${e.isFallback||f!==null?`fallback`:`ai`}`,children:e.isFallback||f!==null?(0,b.jsxs)(b.Fragment,{children:[(0,b.jsx)(`span`,{children:`⚠️`}),` This is not generated through AI`]}):(0,b.jsxs)(b.Fragment,{children:[(0,b.jsx)(`span`,{children:`✨`}),` These are AI recommended responses`]})}),e&&o&&!g&&!n&&!e.isFallback&&(0,b.jsx)(w,{needs:o,onClear:()=>{l(null),r(``)}}),n?(0,b.jsx)(ae,{title:`Failed to load offers`,message:n,onRetry:s}):(0,b.jsxs)(b.Fragment,{children:[!g&&v.length===0&&!n&&e&&(0,b.jsx)(`div`,{className:`empty-state`,children:(0,b.jsx)(`p`,{children:`No recommendations available. Please select a different persona or try again.`})}),!g&&e?.aiWarning&&(0,b.jsxs)(`div`,{className:`ai-warning-banner`,children:[(0,b.jsx)(`span`,{className:`ai-warning-icon`,children:`⚠️`}),(0,b.jsx)(`span`,{children:e.aiWarning})]}),(0,b.jsx)(`div`,{className:`payment-plans ${g?`loading`:``}`,children:g?(0,b.jsxs)(b.Fragment,{children:[(0,b.jsx)(`div`,{className:`skeleton-card`}),(0,b.jsx)(`div`,{className:`skeleton-card`}),(0,b.jsx)(`div`,{className:`skeleton-card`})]}):v.map(e=>(0,b.jsx)(ne,{plan:e,isActive:c===e.id,onClick:()=>l(e.id)},e.id))}),(0,b.jsxs)(`div`,{className:`bottom-section`,children:[e&&(0,b.jsx)(re,{onRefine:e=>{l(null),r(e)},isLoading:g}),y&&x&&(0,b.jsx)(ie,{fundingAmount:y.amount,fixedFee:se.format(x.repaymentAmount-x.fundingAmount),totalToPay:y.totalToPay,onContinue:oe})]})]}),(0,b.jsx)(`footer`,{className:`footer-text`,children:`If you'd like to discuss your offers, contact us`})]})}),(0,b.jsx)(`style`,{children:`
         .section-title {
           font-size: 16px;
           font-weight: 500;
           margin-bottom: 20px;
+        }
+
+        .ai-status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 100px;
+          font-size: 12px;
+          font-weight: 500;
+          margin-bottom: 20px;
+        }
+
+        .ai-status-badge.ai {
+          background-color: #E6FFFA;
+          color: #234E52;
+          border: 1px solid #B2F5EA;
+        }
+
+        .ai-status-badge.fallback {
+          background-color: #FFF5F5;
+          color: #742A2A;
+          border: 1px solid #FED7D7;
+        }
+
+        .ai-status-badge span {
+          font-size: 14px;
         }
 
         .payment-plans {
@@ -452,6 +544,25 @@ Error generating stack: `+e.message+`
           color: var(--text-secondary);
         }
 
+        .ai-warning-banner {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          background: rgba(234, 179, 8, 0.08);
+          border: 1px solid rgba(234, 179, 8, 0.4);
+          border-radius: 10px;
+          padding: 12px 16px;
+          margin-bottom: 20px;
+          font-size: 13px;
+          color: #92400e;
+          line-height: 1.5;
+        }
+
+        .ai-warning-icon {
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+
         .persona-select {
           background: var(--input-bg);
           color: var(--text-primary);
@@ -476,4 +587,4 @@ Error generating stack: `+e.message+`
             grid-template-columns: 1fr;
           }
         }
-      `})]})}(0,v.createRoot)(document.getElementById(`root`)).render((0,b.jsx)(_.StrictMode,{children:(0,b.jsx)(ce,{})}));
+      `})]})}(0,v.createRoot)(document.getElementById(`root`)).render((0,b.jsx)(_.StrictMode,{children:(0,b.jsx)(le,{})}));

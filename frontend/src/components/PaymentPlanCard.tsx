@@ -5,6 +5,8 @@ export interface PaymentPlan {
   amount: string;
   totalToPay: string;
   paymentLabel: string;
+  repaymentTerm: string;
+  expirationDate: string;
   badge?: string;
   isBestFit?: boolean;
   reasons: string[];
@@ -45,6 +47,14 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         <div className="detail-row">
           <div className="detail-label">Payment</div>
           <div className="detail-value">{plan.paymentLabel}</div>
+        </div>
+        <div className="detail-row">
+          <div className="detail-label">Repayment term</div>
+          <div className="detail-value">~{plan.repaymentTerm} days</div>
+        </div>
+        <div className="detail-row">
+          <div className="detail-label">Offer expires</div>
+          <div className="detail-value">{plan.expirationDate}</div>
         </div>
       </div>
 
