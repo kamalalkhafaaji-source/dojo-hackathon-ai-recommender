@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using Mscc.GenerativeAI;
+using Google.GenAI;
+using Google.GenAI.Types;
 using OptimalOfferAI.Models;
 
 namespace OptimalOfferAI.Services;
@@ -24,9 +25,42 @@ public class GeminiRecommenderService
             throw new InvalidOperationException("Gemini API Key is missing. Please set the GEMINI_API_KEY environment variable.");
         }
 
-        var googleAi = new GoogleAI(apiKey);
-        var model = googleAi.GenerativeModel(model: "gemini-2.0-flash");
-        model.UseJsonMode = true;
+        var client = new Client(apiKey: apiKey);
+
+        var schema = new Schema()
+        {
+            Type = Google.GenAI.Types.Type.Object,
+            Properties = new Dictionary<string, Schema>()
+            {
+                ["recommendations"] = new Schema()
+                {
+                    Type = Google.GenAI.Types.Type.Array,
+                    Items = new Schema()
+                    {
+                        Type = Google.GenAI.Types.Type.Object,
+                        Properties = new Dictionary<string, Schema>()
+                        {
+                            ["offerId"] = new Schema() { Type = Google.GenAI.Types.Type.String },
+                            ["rank"] = new Schema() { Type = Google.GenAI.Types.Type.Integer },
+                            ["headline"] = new Schema() { Type = Google.GenAI.Types.Type.String },
+                            ["reasons"] = new Schema()
+                            {
+                                Type = Google.GenAI.Types.Type.Array,
+                                Items = new Schema() { Type = Google.GenAI.Types.Type.String }
+                            }
+                        },
+                        Required = new List<string> { "offerId", "rank", "headline", "reasons" }
+                    }
+                }
+            },
+            Required = new List<string> { "recommendations" }
+        };
+
+        var config = new GenerateContentConfig()
+        {
+            ResponseMimeType = "application/json",
+            ResponseSchema = schema
+        };
 
         var prompt = PromptBuilder.BuildPrompt(request);
 
@@ -36,10 +70,14 @@ public class GeminiRecommenderService
         {
             try
             {
-                response = await model.GenerateContent(prompt);
+                response = await client.Models.GenerateContentAsync(
+                    model: "gemini-2.0-flash",
+                    contents: prompt,
+                    config: config
+                );
                 if (response != null) break;
             }
-            catch (HttpRequestException ex) when (ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests"))
+            catch (Exception ex) when (ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests") || ex.Message.Contains("quota"))
             {
                 if (attempt == 2) throw;
                 await Task.Delay(TimeSpan.FromSeconds(5 * (attempt + 1)));
