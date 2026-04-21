@@ -39,10 +39,12 @@ public class OfferOrchestrator : IOfferOrchestrator
 
         // If AI service fails, generate fallback recommendations based on highest funding amount
         List<Recommendation> recommendations;
+        bool isFallback = false;
         if (result == null || result.Recommendations == null || result.Recommendations.Count == 0)
         {
             Console.WriteLine($"AI service unavailable. Generating fallback recommendations for {personaKey}.");
             recommendations = GenerateFallbackRecommendations(fixture.Offers);
+            isFallback = true;
         }
         else
         {
@@ -55,7 +57,8 @@ public class OfferOrchestrator : IOfferOrchestrator
             new MerchantSummary(
                 fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant", 
                 fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
-            )
+            ),
+            IsFallback: isFallback
         );
     }
 
@@ -89,7 +92,8 @@ public class OfferOrchestrator : IOfferOrchestrator
                 OfferId: offer.OfferId,
                 Rank: rank,
                 Headline: $"Funding Option {rank}: ${offer.FundingAmount:F0}",
-                Reasons: reasons
+                Reasons: reasons,
+                Tag: rank == 1 ? "Best fit" : rank == 2 ? "2nd" : "3rd"
             ));
         }
 

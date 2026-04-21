@@ -28,6 +28,7 @@ public static class PromptBuilder
             - Each recommendation MUST have a short, friendly headline written for the merchant (e.g. "Best if you have a big spend coming up", "Lowest cost option for a quick top-up", "Keeps your daily cash flow comfortable").
             - Each recommendation MUST have exactly 3 reasons. 
             - Reasons should be written in plain English directly to the merchant ("you", "your") and reference concrete numbers from the data (amounts, percentages, days, trends). No generic marketing copy.
+            - **Tag:** Generate a concise, 2-word phrase summarizing the primary benefit or reason for this offer (e.g. "Best fit", "Growth focus", "Quick cash").
             - **Compare and Contrast:** Explain *why this offer is better than alternatives*. (e.g. "This offers a lower fee compared to other options, while still covering your seasonal inventory costs").
             - **Peer Pressure:** Always try to include one reason that compares the offer to typical funding taken by similar businesses in their segment, anchoring to real peer behaviour.
             - Return ONLY valid JSON matching this exact schema, with no extra text:
@@ -38,6 +39,7 @@ public static class PromptBuilder
                   "offerId": "string",
                   "rank": 1,
                   "headline": "string",
+                  "tag": "string",
                   "reasons": ["string", "string", "string"]
                 }
               ]

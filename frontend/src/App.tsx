@@ -57,7 +57,7 @@ function App() {
         amount: formatter.format(offer.fundingAmount),
         totalToPay: formatter.format(offer.repaymentAmount),
         paymentLabel: `${offer.holdbackPercentage}% of daily sales`,
-        badge: rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd',
+        badge: rec.tag || (rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd'),
         isBestFit: rec.rank === 1,
         reasons: rec.reasons
       };
@@ -131,6 +131,16 @@ function App() {
             {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
           </h2>
 
+          {data && !isLoading && !error && (
+            <div className={`ai-status-badge ${(data.isFallback || appliedCustomAmount !== null) ? 'fallback' : 'ai'}`}>
+              {(data.isFallback || appliedCustomAmount !== null) ? (
+                <><span>⚠️</span> This is not generated through AI</>
+              ) : (
+                <><span>✨</span> These are AI recommended responses</>
+              )}
+            </div>
+          )}
+
           {error ? (
             <ErrorMessage 
               title="Failed to load offers" 
@@ -190,6 +200,33 @@ function App() {
           font-size: 16px;
           font-weight: 500;
           margin-bottom: 20px;
+        }
+
+        .ai-status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 100px;
+          font-size: 12px;
+          font-weight: 500;
+          margin-bottom: 20px;
+        }
+
+        .ai-status-badge.ai {
+          background-color: #E6FFFA;
+          color: #234E52;
+          border: 1px solid #B2F5EA;
+        }
+
+        .ai-status-badge.fallback {
+          background-color: #FFF5F5;
+          color: #742A2A;
+          border: 1px solid #FED7D7;
+        }
+
+        .ai-status-badge span {
+          font-size: 14px;
         }
 
         .payment-plans {
