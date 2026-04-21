@@ -13,7 +13,6 @@ const FundingHeader: React.FC = () => {
       </div>
 
       <div className="header-subtitle">You're eligible for up to £15,000 in business funding.</div>
-      <div className="header-desc">Customise and review your offer.</div>
       <a href="#" className="header-link">Learn how flexible payments work.</a>
 
       <style>{`
@@ -46,12 +45,6 @@ const FundingHeader: React.FC = () => {
         .header-subtitle {
           font-size: 18px;
           margin-bottom: 8px;
-        }
-
-        .header-desc {
-          color: var(--text-secondary);
-          font-size: 14px;
-          margin-bottom: 10px;
         }
 
         .header-link {

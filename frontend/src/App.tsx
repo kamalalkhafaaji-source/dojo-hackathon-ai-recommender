@@ -125,7 +125,7 @@ function App() {
               </div>
 
               <div className="bottom-section">
-                <RefineOffers onRefine={refine} isLoading={isLoading} />
+                {data && <RefineOffers onRefine={refine} isLoading={isLoading} />}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
                     fundingAmount={selectedPlan.amount}
