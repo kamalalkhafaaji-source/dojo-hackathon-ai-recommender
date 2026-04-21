@@ -17,12 +17,13 @@ public class GeminiRecommenderService
 
     private readonly GeminiOptions _options;
 
-    public async Task<RecommendationResponse> GetRecommendationsAsync(RecommendationRequest request)
+    public async Task<RecommendationResponse?> GetRecommendationsAsync(RecommendationRequest request)
     {
         var apiKey = _options.ApiKey;
         if (string.IsNullOrEmpty(apiKey))
         {
-            throw new InvalidOperationException("Gemini API Key is missing. Please set the GEMINI_API_KEY environment variable.");
+            Console.WriteLine("WARNING: Gemini API Key is missing. Returning null to allow fallback to basic recommendations.");
+            return null;
         }
 
         var client = new Client(apiKey: apiKey);
@@ -64,35 +65,67 @@ public class GeminiRecommenderService
 
         var prompt = PromptBuilder.BuildPrompt(request);
 
-        // Retry up to 3 times on rate-limit errors
-        GenerateContentResponse? response = null;
-        for (var attempt = 0; attempt < 3; attempt++)
+        try
         {
-            try
+            Console.WriteLine("Gemini API: sending request (attempt 1)...");
+            var response = await client.Models.GenerateContentAsync(
+                model: "gemini-2.0-flash",
+                contents: prompt,
+                config: config
+            );
+
+            if (response != null)
             {
-                response = await client.Models.GenerateContentAsync(
-                    model: "gemini-2.0-flash",
-                    contents: prompt,
-                    config: config
-                );
-                if (response != null) break;
+                Console.WriteLine("Gemini API: attempt 1 succeeded.");
+                return ParseResponse(response);
             }
-            catch (Exception ex) when (ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests") || ex.Message.Contains("quota"))
-            {
-                if (attempt == 2) throw;
-                await Task.Delay(TimeSpan.FromSeconds(5 * (attempt + 1)));
-            }
+            Console.WriteLine("Gemini API returned null on first attempt, retrying once...");
+        }
+        catch (Exception ex)
+        {
+            var is429 = ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests") || ex.Message.Contains("quota");
+            Console.WriteLine($"Gemini API error on attempt 1 [{(is429 ? "429 RATE LIMITED" : ex.GetType().Name)}]: {ex.Message}");
+            if (ex.InnerException != null)
+                Console.WriteLine($"  Inner exception: {ex.InnerException.GetType().Name} - {ex.InnerException.Message}");
+            Console.WriteLine("Retrying once...");
         }
 
-        if (response == null)
+        // One retry
+        try
         {
-            throw new Exception("Gemini API returned a null response. This often happens if the API key is invalid or there was a connection issue.");
-        }
+            Console.WriteLine("Gemini API: attempting retry...");
+            var response = await client.Models.GenerateContentAsync(
+                model: "gemini-2.0-flash",
+                contents: prompt,
+                config: config
+            );
 
+            if (response == null)
+            {
+                Console.WriteLine("Gemini API returned null on retry. Returning null for fallback.");
+                return null;
+            }
+
+            Console.WriteLine("Gemini API retry succeeded.");
+            return ParseResponse(response);
+        }
+        catch (Exception ex)
+        {
+            var is429 = ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests") || ex.Message.Contains("quota");
+            Console.WriteLine($"Gemini API error on retry [{(is429 ? "429 RATE LIMITED" : ex.GetType().Name)}]: {ex.Message}. Returning null for fallback.");
+            if (ex.InnerException != null)
+                Console.WriteLine($"  Inner exception: {ex.InnerException.GetType().Name} - {ex.InnerException.Message}");
+            return null;
+        }
+    }
+
+    private static RecommendationResponse? ParseResponse(GenerateContentResponse response)
+    {
         var text = response.Text;
         if (string.IsNullOrEmpty(text))
         {
-            throw new Exception("Gemini API returned an empty or null text response. The request might have been blocked by safety filters or the model failed to generate content.");
+            Console.WriteLine("Gemini API returned empty response. Returning null for fallback.");
+            return null;
         }
 
         // Strip markdown fences if present
@@ -106,8 +139,10 @@ public class GeminiRecommenderService
             text = text.Trim();
         }
 
-        var result = JsonSerializer.Deserialize<RecommendationResponse>(text, JsonOpts)
-                     ?? throw new Exception("Failed to parse Gemini response");
+        var result = JsonSerializer.Deserialize<RecommendationResponse>(text, JsonOpts);
+        if (result == null)
+            Console.WriteLine("Failed to deserialize Gemini response. Returning null for fallback.");
+
         return result;
     }
 }

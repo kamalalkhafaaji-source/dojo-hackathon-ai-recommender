@@ -34,16 +34,20 @@ public class RecommendationsController : ControllerBase
             var enriched = await _orchestrator.GetEnrichedRecommendationsAsync(input);
 
             if (enriched == null)
-                return NotFound($"Persona not found.");
+                return NotFound(new { message = "Persona not found." });
 
             return Ok(enriched);
         }
         catch (Exception ex)
         {
-            return Problem(
-                detail: ex.Message,
-                title: "An error occurred while generating recommendations.",
-                statusCode: StatusCodes.Status500InternalServerError);
+            // Log the error for monitoring
+            Console.WriteLine($"Error in GetRecommendations: {ex.GetType().Name} - {ex.Message}");
+            
+            // Return a user-friendly error response instead of 500
+            return BadRequest(new { 
+                message = "Unable to generate recommendations at this time. Please try again later.",
+                error = ex.Message 
+            });
         }
     }
 }
