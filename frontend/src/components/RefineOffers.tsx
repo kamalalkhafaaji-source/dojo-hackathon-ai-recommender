@@ -41,21 +41,22 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
         .not-right {
           background-color: var(--bg-color);
           border: 1px solid var(--border-color);
-          border-radius: 12px;
-          padding: 20px;
+          border-radius: 20px;
+          padding: 24px;
         }
 
         .not-right h3 {
           margin-top: 0;
           font-size: 16px;
-          font-weight: 500;
+          font-weight: 600;
           margin-bottom: 10px;
         }
 
         .not-right p {
           color: var(--text-secondary);
-          font-size: 14px;
-          margin-bottom: 15px;
+          font-size: 15px;
+          margin-bottom: 20px;
+          line-height: 1.5;
         }
 
         .not-right input {
@@ -63,10 +64,17 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
           background-color: var(--input-bg);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 15px;
+          padding: 16px;
+          border-radius: 12px;
+          margin-bottom: 16px;
           box-sizing: border-box;
+          font-size: 15px;
+          transition: border-color 0.2s ease;
+        }
+
+        .not-right input:focus {
+          outline: none;
+          border-color: var(--accent-color);
         }
 
         .no-margin-bottom {

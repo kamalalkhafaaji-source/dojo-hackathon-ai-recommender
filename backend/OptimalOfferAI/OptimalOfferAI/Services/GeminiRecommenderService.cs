@@ -75,7 +75,7 @@ public class GeminiRecommenderService
                     contents: prompt,
                     config: config
                 );
-                break;
+                if (response != null) break;
             }
             catch (Exception ex) when (ex.Message.Contains("429") || ex.Message.Contains("TooManyRequests") || ex.Message.Contains("quota"))
             {
@@ -84,7 +84,16 @@ public class GeminiRecommenderService
             }
         }
 
-        var text = response?.Text ?? throw new Exception("Empty Gemini response");
+        if (response == null)
+        {
+            throw new Exception("Gemini API returned a null response. This often happens if the API key is invalid or there was a connection issue.");
+        }
+
+        var text = response.Text;
+        if (string.IsNullOrEmpty(text))
+        {
+            throw new Exception("Gemini API returned an empty or null text response. The request might have been blocked by safety filters or the model failed to generate content.");
+        }
 
         // Strip markdown fences if present
         text = text.Trim();

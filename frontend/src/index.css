@@ -1,14 +1,15 @@
 :root {
-  --bg-color: #121212;
-  --sidebar-bg: #1a1a1a;
-  --narrow-sidebar-bg: #0d0d0d;
-  --card-bg: #1e1e1e;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --accent-color: #276955; /* teal */
-  --accent-hover: #338a70;
-  --border-color: #2a2a2a;
-  --input-bg: #2a2a2a;
+  --bg-color: #FFFFFF;
+  --sidebar-bg: #F3F4F6;
+  --narrow-sidebar-bg: #E5E7EB;
+  --card-bg: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #4B5563;
+  --accent-color: #196254; /* Dojo Green */
+  --accent-hover: #144d42;
+  --border-color: #E5E7EB;
+  --input-bg: #F9FAFB;
+  --btn-primary-text: #FFFFFF;
 }
 
 body {
@@ -18,6 +19,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-layout {
@@ -35,39 +37,46 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
-  padding: 60px 40px;
+  padding: 80px 60px 80px 60px;
   box-sizing: border-box;
 }
 
 /* Base button styles */
 .btn {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 8px 20px;
-  border-radius: 20px;
+  background-color: #000000;
+  border: 1px solid #000000;
+  color: #FFFFFF;
+  padding: 14px 24px;
+  border-radius: 100px; /* Pill shape */
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   width: fit-content;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #262626;
+  border-color: #262626;
 }
 
 .btn-primary {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
-  color: white;
+  color: var(--btn-primary-text);
 }
 
 .btn-primary:hover {
   background-color: var(--accent-hover);
   border-color: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .btn-full {
   width: 100%;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 10px;
+  border-radius: 100px;
+  padding: 16px;
+  margin-bottom: 12px;
 }
