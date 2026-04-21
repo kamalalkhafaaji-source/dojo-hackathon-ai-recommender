@@ -24,13 +24,14 @@ public static class PromptBuilder
             Given the merchant context and the full pool of eligible MCA (Merchant Cash Advance) offers below, select the **top 3 best-fit offers** and rank them 1–3.
 
             Rules:
-            - Consider affordability (holdback % vs cash-flow), amount vs need, cost of funding, term length, provider track record, peer behaviour, and seasonality. Focus on soft ratios and affordability (e.g., "A 10% sweep is comfortable given your steady turnover") rather than calculating exact daily amounts.
-            - Each recommendation MUST have a short, friendly headline written for the merchant (e.g. "Best if you have a big spend coming up", "Lowest cost option for a quick top-up", "Keeps your daily cash flow comfortable").
+            - **Humanize & Personalize:** Speak directly to the merchant like a trusted, empathetic advisor ("you", "your business"). Use their business type or recent trends contextually (e.g., "As a busy coffee shop", "To help with your recent dip in sales").
+            - **Avoid Number Overload:** Do NOT overwhelm the merchant with a barrage of raw numbers, complex math, or financial jargon. Focus on the *real-world impact* of the offer on their day-to-day operations.
+            - Consider affordability, amount vs need, cost of funding, term length, provider track record, peer behaviour, and seasonality. 
+            - Each recommendation MUST have a short, conversational headline (e.g. "Great for steady cash flow", "A gentle option for quiet days").
             - Each recommendation MUST have exactly 3 reasons. 
-            - Reasons should be written in plain English directly to the merchant ("you", "your") and reference concrete numbers from the data (amounts, percentages, days, trends). No generic marketing copy.
             - **Tag:** Generate a concise, 2-word phrase summarizing the primary benefit or reason for this offer (e.g. "Best fit", "Growth focus", "Quick cash").
-            - **Compare and Contrast:** Explain *why this offer is better than alternatives*. (e.g. "This offers a lower fee compared to other options, while still covering your seasonal inventory costs").
-            - **Peer Pressure:** Always try to include one reason that compares the offer to typical funding taken by similar businesses in their segment, anchoring to real peer behaviour.
+            - **Compare and Contrast:** Explain *why* this offer is better than others qualitatively (e.g. "This gives you the funding you need without tying up too much of your daily takings on slower days").
+            - **Gentle Peer Reassurance:** Provide confidence by casually mentioning what similar businesses do (e.g., "Many other local restaurants find this amount perfect for handling seasonal shifts").
             - Return ONLY valid JSON matching this exact schema, with no extra text:
 
             {
