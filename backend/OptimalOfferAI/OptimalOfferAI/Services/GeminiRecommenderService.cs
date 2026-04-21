@@ -60,20 +60,24 @@ public class GeminiRecommenderService
         var merchantJson = JsonSerializer.Serialize(request.Merchant, JsonOpts);
         var offersJson = JsonSerializer.Serialize(request.Offers, JsonOpts);
 
-        var refinement = request.UserNeeds != null
-            ? $"\n\nThe merchant has also stated the following additional needs — factor these heavily into your ranking:\n\"{request.UserNeeds}\""
-            : "";
+        var needsContext = request.UserNeeds != null
+            ? $"CRITICAL: The merchant has provided the following specific feedback/needs:\n\"{request.UserNeeds}\"\nYour primary goal is to address these needs when selecting and ranking the offers."
+            : "The merchant has not provided specific needs yet, prioritize based on general business health and typical patterns.";
 
         return $$"""
             You are an expert business finance advisor for small UK merchants.
 
+            {{needsContext}}
+
             Given the merchant context and the full pool of eligible MCA (Merchant Cash Advance) offers below, select the **top 3 best-fit offers** and rank them 1–3.
 
             Rules:
-            - Consider affordability (holdback % vs cash-flow), amount vs need, cost of funding, term length, provider track record with this merchant, peer behaviour, and seasonality.
+            - Consider affordability (holdback % vs cash-flow), amount vs need, cost of funding, term length, provider track record, peer behaviour, and seasonality. Focus on soft ratios and affordability (e.g., "A 10% sweep is comfortable given your steady turnover") rather than calculating exact daily amounts.
             - Each recommendation MUST have a short, friendly headline written for the merchant (e.g. "Best if you have a big spend coming up", "Lowest cost option for a quick top-up", "Keeps your daily cash flow comfortable").
-            - Each recommendation MUST have exactly 3 reasons. Reasons should be written in plain English directly to the merchant ("you", "your") and reference concrete numbers from the data (amounts, percentages, days, trends). They should help the merchant understand *when and why* this offer makes sense for them — e.g. "Take this if you need to cover a large one-off purchase", "Your 12% holdback means you'd still keep roughly £X per day on quiet Mondays". No generic marketing copy.
-            - If the merchant has provided additional needs (userNeeds), tailor the headlines and reasons specifically to what they've told you.
+            - Each recommendation MUST have exactly 3 reasons. 
+            - Reasons should be written in plain English directly to the merchant ("you", "your") and reference concrete numbers from the data (amounts, percentages, days, trends). No generic marketing copy.
+            - **Compare and Contrast:** Explain *why this offer is better than alternatives*. (e.g. "This offers a lower fee compared to other options, while still covering your seasonal inventory costs").
+            - **Peer Pressure:** Always try to include one reason that compares the offer to typical funding taken by similar businesses in their segment, anchoring to real peer behaviour.
             - Return ONLY valid JSON matching this exact schema, with no extra text:
 
             {
@@ -92,7 +96,6 @@ public class GeminiRecommenderService
 
             ELIGIBLE MCA OFFERS:
             {{offersJson}}
-            {{refinement}}
 
             Return the JSON now.
             """;
