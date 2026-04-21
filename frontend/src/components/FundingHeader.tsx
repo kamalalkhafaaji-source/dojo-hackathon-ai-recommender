@@ -1,9 +1,13 @@
 import React from 'react';
 
+interface FundingHeaderProps {
+  maxAmount?: number;
+}
+
 /**
  * FundingHeader component displays the brand logo and the eligibility subtitle.
  */
-const FundingHeader: React.FC = () => {
+const FundingHeader: React.FC<FundingHeaderProps> = ({ maxAmount }) => {
   return (
     <header className="funding-header">
       <div className="header-logo">
@@ -12,7 +16,12 @@ const FundingHeader: React.FC = () => {
         <h1 className="logo-partner">Y O U L E N D</h1>
       </div>
 
-      <div className="header-subtitle">You're eligible for up to £15,000 in business funding.</div>
+      {maxAmount !== undefined && (
+        <div className="header-subtitle">
+          You're eligible for up to £{maxAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })} in business funding.
+        </div>
+      )}
+      <div className="header-desc">Customise and review your offer.</div>
       <a href="#" className="header-link">Learn how flexible payments work.</a>
 
       <style>{`
