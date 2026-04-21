@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SidebarNarrow from './components/SidebarNarrow';
 import SidebarWide from './components/SidebarWide';
 import FundingHeader from './components/FundingHeader';
@@ -7,61 +7,48 @@ import { PaymentPlanCard } from './components/PaymentPlanCard';
 import type { PaymentPlan } from './components/PaymentPlanCard';
 import RefineOffers from './components/RefineOffers';
 import SummaryBox from './components/SummaryBox';
-
-const INITIAL_PLANS: PaymentPlan[] = [
-  {
-    id: 'plan-1',
-    amount: '£14,000.00',
-    totalToPay: '£25,800.00',
-    paymentLabel: '8% of daily sales',
-    badge: 'Best fit',
-    isBestFit: true,
-    reasons: [
-      'Your low 8% sweep keeps ~£1,288/day free for operations',
-      'This amount (£14k) is a manageable ~33% of your monthly turnover (£42k)',
-      'Repayment in ~9 months, matching your coffee seasonality'
-    ]
-  },
-  {
-    id: 'plan-2',
-    amount: '£14,000.00',
-    totalToPay: '£23,800.00',
-    paymentLabel: '10% of daily sales',
-    badge: '2nd',
-    reasons: [
-      'Faster repayment helps you clear the debt quickly',
-      'Optimized fee and repayment time for your business flow',
-      'Manageable sweep amount for steady growth'
-    ]
-  },
-  {
-    id: 'plan-3',
-    amount: '£14,000.00',
-    totalToPay: '£22,000.00',
-    paymentLabel: '12% of daily sales',
-    badge: '3rd',
-    reasons: [
-      'Maximize your capital access and invest rapidly',
-      'Quickest repayment to be debt-free faster',
-      'Suitably larger sweep for high-volume periods'
-    ]
-  }
-];
+import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const [fundingAmount, setFundingAmount] = useState<number>(14000);
-  const [selectedPlanId, setSelectedPlanId] = useState<string>('plan-1');
+  const { data, isLoading, error, refine, changePersona, currentPersona } = useRecommendations('rossis-restaurant');
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
-  const selectedPlan = INITIAL_PLANS.find(p => p.id === selectedPlanId) || INITIAL_PLANS[0];
+  const plans = useMemo<PaymentPlan[]>(() => {
+    if (!data) return [];
+    
+    return data.recommendations.map((rec) => {
+      const offer = data.offers[rec.offerId];
+      const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
 
-  const handleConfirm = () => {
-    console.log('Confirmed amount:', fundingAmount);
-    // Logic to update plans based on amount would go here
-  };
+      return {
+        id: rec.offerId,
+        amount: formatter.format(offer.fundingAmount),
+        totalToPay: formatter.format(offer.repaymentAmount),
+        paymentLabel: `${offer.holdbackPercentage}% of daily sales`,
+        badge: rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd',
+        isBestFit: rec.rank === 1,
+        reasons: rec.reasons
+      };
+    });
+  }, [data]);
+
+  // Set initial selected plan when data loads
+  useMemo(() => {
+    if (plans.length > 0 && !selectedPlanId) {
+      setSelectedPlanId(plans[0].id);
+    }
+  }, [plans, selectedPlanId]);
+
+  const selectedPlan = plans.find(p => p.id === selectedPlanId) || plans[0];
+  const selectedOffer = data?.offers[selectedPlanId || ''] || (data ? Object.values(data.offers)[0] : null);
 
   const handleContinue = () => {
-    alert(`Continuing with ${selectedPlan.paymentLabel} plan!`);
+    if (selectedPlan) {
+      alert(`Continuing with ${selectedPlan.paymentLabel} plan!`);
+    }
   };
+
+  const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
 
   return (
     <div className="app-layout">
@@ -70,18 +57,39 @@ function App() {
       
       <main className="main-content">
         <div className="container">
-          <FundingHeader />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <FundingHeader />
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
+              <select 
+                value={currentPersona} 
+                onChange={(e) => {
+                  changePersona(e.target.value);
+                  setSelectedPlanId(null);
+                }}
+                className="persona-select"
+              >
+                <option value="rossis-restaurant">Rossi's Restaurant</option>
+                <option value="lucias-coffee">Lucia's Coffee</option>
+                <option value="salty-dog-bar">Salty Dog Bar</option>
+              </select>
+            </div>
+          </div>
           
           <FundingInput 
-            amount={fundingAmount}
-            onChange={setFundingAmount}
-            onConfirm={handleConfirm}
+            amount={selectedOffer?.fundingAmount || 0}
+            onChange={() => {}} // In this MVP, the amount comes from the AI-selected offer
+            onConfirm={() => {}} 
           />
 
-          <h2 className="section-title">Choose your payment plan:</h2>
+          <h2 className="section-title">
+            {data ? `Recommended for ${data.merchant.tradingName}:` : 'Loading recommendations...'}
+          </h2>
 
-          <div className="payment-plans">
-            {INITIAL_PLANS.map(plan => (
+          {error && <div className="error-message">Error: {error}</div>}
+
+          <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
+            {plans.map(plan => (
               <PaymentPlanCard 
                 key={plan.id}
                 plan={plan}
@@ -92,14 +100,16 @@ function App() {
           </div>
 
           <div className="bottom-section">
-            <RefineOffers />
-            <SummaryBox 
-              fundingAmount={selectedPlan.amount}
-              fixedFee="£11,800.00" // Hardcoded for now based on original design
-              totalToPay={selectedPlan.totalToPay}
-              onContinue={handleContinue}
-              onCancel={() => setSelectedPlanId('plan-1')}
-            />
+            <RefineOffers onRefine={refine} isLoading={isLoading} />
+            {selectedPlan && selectedOffer && (
+              <SummaryBox 
+                fundingAmount={selectedPlan.amount}
+                fixedFee={formatter.format(selectedOffer.repaymentAmount - selectedOffer.fundingAmount)}
+                totalToPay={selectedPlan.totalToPay}
+                onContinue={handleContinue}
+                onCancel={() => setSelectedPlanId(plans[0]?.id || null)}
+              />
+            )}
           </div>
 
           <footer className="footer-text">
@@ -120,6 +130,12 @@ function App() {
           grid-template-columns: repeat(3, 1fr);
           gap: 20px;
           margin-bottom: 40px;
+          transition: opacity 0.2s ease;
+        }
+
+        .payment-plans.loading {
+          opacity: 0.5;
+          pointer-events: none;
         }
 
         .bottom-section {
@@ -133,6 +149,25 @@ function App() {
           margin-bottom: 40px;
           color: var(--text-secondary);
           font-size: 12px;
+        }
+
+        .error-message {
+          color: #ff4d4d;
+          background: rgba(255, 77, 77, 0.1);
+          padding: 10px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          font-size: 14px;
+        }
+
+        .persona-select {
+          background: var(--input-bg);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
+          padding: 5px 10px;
+          border-radius: 6px;
+          font-size: 12px;
+          outline: none;
         }
 
         @media (max-width: 1100px) {

@@ -1,6 +1,9 @@
-﻿using OptimalOfferAI.Models;
+using OptimalOfferAI.Models;
 using OptimalOfferAI.Services;
+using OptimalOfferAI.Repositories;
 using System.Text.Json;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,51 +11,77 @@ var builder = WebApplication.CreateBuilder(args);
 if (Environment.GetEnvironmentVariable("GEMINI_API_KEY") is { } key)
     builder.Configuration["Gemini:ApiKey"] = key;
 
-builder.Services.AddSingleton<GeminiRecommenderService>();
-builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-
-var app = builder.Build();
-app.UseCors();
-
-var jsonOpts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-// Load fixtures
-var fixturesDir = Path.Combine(AppContext.BaseDirectory, "Fixtures");
-if (!Directory.Exists(fixturesDir))
-    fixturesDir = Path.Combine(Directory.GetCurrentDirectory(), "Fixtures");
-
-var personas = new Dictionary<string, RecommendationRequest>(StringComparer.OrdinalIgnoreCase);
-foreach (var file in Directory.GetFiles(fixturesDir, "*.json"))
+var apiKey = builder.Configuration["Gemini:ApiKey"];
+if (string.IsNullOrEmpty(apiKey))
 {
-    var json = await File.ReadAllTextAsync(file);
-    var data = JsonSerializer.Deserialize<RecommendationRequest>(json, jsonOpts)!;
-    var name = Path.GetFileNameWithoutExtension(file);
-    personas[name] = data;
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("WARNING: Gemini:ApiKey is not set. The recommender service will fail.");
+    Console.WriteLine("Please set the GEMINI_API_KEY environment variable.");
+    Console.ResetColor();
 }
 
-// List available personas
-app.MapGet("/personas", () => Results.Json(personas.Keys));
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection(GeminiOptions.SectionName));
 
-// Get recommendations
-app.MapPost("/recommendations", async (RecommendationsInput input, GeminiRecommenderService gemini) =>
+builder.Services.AddSingleton<IPersonaRepository, FileBasedPersonaRepository>();
+builder.Services.AddSingleton<GeminiRecommenderService>();
+builder.Services.AddScoped<IOfferOrchestrator, OfferOrchestrator>();
+
+builder.Services.AddControllers();
+builder.Services.AddCors(options =>
 {
-    var personaKey = input.Persona ?? personas.Keys.First();
-    if (!personas.TryGetValue(personaKey, out var fixture))
-        return Results.NotFound($"Persona '{personaKey}' not found. Available: {string.Join(", ", personas.Keys)}");
-
-    var request = fixture with { UserNeeds = input.UserNeeds };
-    var result = await gemini.GetRecommendationsAsync(request);
-
-    // Enrich response with offer details for the front-end
-    var enriched = new
+    options.AddPolicy("AllowAll", policy =>
     {
-        result.Recommendations,
-        Offers = fixture.Offers.ToDictionary(o => o.OfferId),
-        Merchant = new { fixture.Merchant.BusinessProfile.TradingName, fixture.Merchant.BusinessProfile.Industry }
-    };
-    return Results.Json(enriched);
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
-app.Run();
+// Add OpenAPI services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "DOJO Optimal Offer AI API",
+        Version = "v1",
+        Description = "An API to recommend business funding offers using AI."
+    });
+    
+    // Include XML comments for Controller documentation
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+});
 
-record RecommendationsInput(string? Persona = null, string? UserNeeds = null);
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+app.UseCors("AllowAll");
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "DOJO Optimal Offer AI API v1");
+    options.RoutePrefix = "swagger"; // Serves the Swagger UI at /swagger
+});
+
+app.MapControllers();
+
+// Add a minimal API endpoint to list personas (replaces the previous map logic)
+app.MapGet("/personas", async (IPersonaRepository repo) => 
+{
+    var keys = await repo.GetPersonaKeysAsync();
+    return Results.Json(keys);
+})
+.WithName("GetPersonas")
+.WithDescription("Retrieves a list of available mocked merchant personas.");
+
+app.Run();

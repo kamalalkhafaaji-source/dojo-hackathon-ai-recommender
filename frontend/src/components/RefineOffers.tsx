@@ -1,15 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+interface RefineOffersProps {
+  onRefine: (needs: string) => void;
+  isLoading?: boolean;
+}
 
 /**
  * RefineOffers component for users to provide custom requirements.
  */
-const RefineOffers: React.FC = () => {
+const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
+  const [value, setValue] = useState('');
+
+  const handleSubmit = () => {
+    if (value.trim()) {
+      onRefine(value);
+    }
+  };
+
   return (
     <div className="not-right">
       <h3>Not quite right?</h3>
       <p>Tell us more about what you need and we'll refine these offers.</p>
-      <input type="text" placeholder="e.g. I need at least £30k, and a lower daily sweep" />
-      <button className="btn btn-primary btn-full no-margin-bottom">Refine offers</button>
+      <input 
+        type="text" 
+        placeholder="e.g. I need at least £30k, and a lower daily sweep" 
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+        disabled={isLoading}
+      />
+      <button 
+        className="btn btn-primary btn-full no-margin-bottom"
+        onClick={handleSubmit}
+        disabled={isLoading || !value.trim()}
+      >
+        {isLoading ? 'Refining...' : 'Refine offers'}
+      </button>
 
       <style>{`
         .not-right {

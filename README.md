@@ -11,5 +11,14 @@ An AI-powered offer recommender that takes merchant context and available offers
 - `/backend`: .NET Console App for the AI recommender service.
 - `/data`: (To be added) Mocked JSON fixtures for merchant personas and offers.
 
+## How to Run
+To run both the frontend and backend simultaneously, use the provided `start.sh` script from the root of the project:
+
+```bash
+./start.sh
+```
+
+This script will automatically install any missing frontend dependencies, start the backend in the background, start the frontend server, and gracefully shut both down when you press `Ctrl+C`.
+
 ## Scope
 MCA offers only. No backend wiring to live Dojo services.
