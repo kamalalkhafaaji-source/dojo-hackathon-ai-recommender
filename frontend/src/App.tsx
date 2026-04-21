@@ -7,7 +7,6 @@ import { PaymentPlanCard } from './components/PaymentPlanCard';
 import type { PaymentPlan } from './components/PaymentPlanCard';
 import RefineOffers from './components/RefineOffers';
 import SummaryBox from './components/SummaryBox';
-import LoadingSpinner from './components/LoadingSpinner';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
@@ -99,16 +98,8 @@ function App() {
             </div>
           )}
 
-          {!data && isLoading && <LoadingSpinner label="We are fetching your offers" />}
-
-          <div className={`payment-plans ${isLoading && data ? 'loading' : ''}`}>
-            {isLoading && data && (
-              <div className="overlay-spinner">
-                <LoadingSpinner label="Tailoring your results..." />
-              </div>
-            )}
-            
-            {isLoading && !data ? (
+          <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
+            {isLoading ? (
               <>
                 <div className="skeleton-card"></div>
                 <div className="skeleton-card"></div>
@@ -162,17 +153,8 @@ function App() {
         }
 
         .payment-plans.loading {
-          opacity: 0.3;
+          opacity: 0.8;
           pointer-events: none;
-        }
-
-        .overlay-spinner {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 10;
-          width: 100%;
         }
 
         .skeleton-card {
