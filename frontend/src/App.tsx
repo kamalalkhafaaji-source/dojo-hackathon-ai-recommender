@@ -11,10 +11,13 @@ import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
+  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
+  const [isLocalLoading, setIsLocalLoading] = useState(false);
+
+  const isLoading = isApiLoading || isLocalLoading;
 
   useEffect(() => {
     setAppliedCustomAmount(null);
@@ -36,7 +39,7 @@ function App() {
       recommendationsToUse = top3.map((offer, index) => ({
         offerId: offer.offerId,
         rank: index + 1,
-        headline: index === 0 ? `Closest match to £${appliedCustomAmount}` : 'Alternative option',
+        headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString()}` : 'Alternative option',
         reasons: [
           `Funding amount: £${offer.fundingAmount.toLocaleString()}`,
           `Repayment: £${offer.repaymentAmount.toLocaleString()} at ${offer.holdbackPercentage}% sweep`,
@@ -113,9 +116,13 @@ function App() {
               amount={currentFundingAmount}
               onChange={(val) => setFundingInputAmount(val)}
               onConfirm={() => {
-                if (fundingInputAmount !== '') {
-                  setAppliedCustomAmount(Number(fundingInputAmount));
-                  setSelectedPlanId(null);
+                if (fundingInputAmount !== '' && fundingInputAmount !== appliedCustomAmount) {
+                  setIsLocalLoading(true);
+                  setTimeout(() => {
+                    setAppliedCustomAmount(Number(fundingInputAmount));
+                    setSelectedPlanId(null);
+                    setIsLocalLoading(false);
+                  }, 500);
                 }
               }} 
             />
