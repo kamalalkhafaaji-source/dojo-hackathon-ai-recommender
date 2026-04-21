@@ -10,13 +10,22 @@ export function useRecommendations(initialPersona?: string) {
   const [userNeeds, setUserNeeds] = useState<string | undefined>();
 
   const getRecommendations = useCallback(async (p?: string, needs?: string) => {
+    // Don't fetch if no persona is selected
+    if (!p) {
+      setData(null);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
       const result = await fetchRecommendations({ persona: p, userNeeds: needs });
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
+      console.error('Failed to fetch recommendations:', errorMessage);
+      setData(null);
     } finally {
       setIsLoading(false);
     }

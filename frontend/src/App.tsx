@@ -10,7 +10,7 @@ import SummaryBox from './components/SummaryBox';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading, error, refine, changePersona, currentPersona } = useRecommendations('rossis-restaurant');
+  const { data, isLoading, error, refine, changePersona, currentPersona } = useRecommendations();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const plans = useMemo<PaymentPlan[]>(() => {
@@ -62,13 +62,15 @@ function App() {
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
               <select 
-                value={currentPersona} 
+                value={currentPersona || ''} 
                 onChange={(e) => {
                   changePersona(e.target.value);
                   setSelectedPlanId(null);
                 }}
                 className="persona-select"
+                disabled={isLoading}
               >
+                <option value="">Select a persona...</option>
                 <option value="rossis-restaurant">Rossi's Restaurant</option>
                 <option value="lucias-coffee">Lucia's Coffee</option>
                 <option value="salty-dog-bar">Salty Dog Bar</option>
@@ -76,27 +78,43 @@ function App() {
             </div>
           </div>
           
-          <FundingInput 
-            amount={selectedOffer?.fundingAmount || 0}
-            onChange={() => {}} // In this MVP, the amount comes from the AI-selected offer
-            onConfirm={() => {}} 
-          />
+          {data && (
+            <FundingInput 
+              amount={selectedOffer?.fundingAmount || 0}
+              onChange={() => {}} // In this MVP, the amount comes from the AI-selected offer
+              onConfirm={() => {}} 
+            />
+          )}
 
           <h2 className="section-title">
-            {data ? `Recommended for ${data.merchant.tradingName}:` : 'Loading recommendations...'}
+            {isLoading ? 'Loading recommendations...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'Select a persona to get started'}
           </h2>
 
-          {error && <div className="error-message">Error: {error}</div>}
+          {error && <div className="error-message">⚠️ Error: {error}</div>}
+
+          {!isLoading && plans.length === 0 && !error && (
+            <div className="empty-state">
+              <p>No recommendations available. Please select a different persona or try again.</p>
+            </div>
+          )}
 
           <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
-            {plans.map(plan => (
-              <PaymentPlanCard 
-                key={plan.id}
-                plan={plan}
-                isActive={selectedPlanId === plan.id}
-                onClick={() => setSelectedPlanId(plan.id)}
-              />
-            ))}
+            {isLoading ? (
+              <>
+                <div className="skeleton-card"></div>
+                <div className="skeleton-card"></div>
+                <div className="skeleton-card"></div>
+              </>
+            ) : (
+              plans.map(plan => (
+                <PaymentPlanCard 
+                  key={plan.id}
+                  plan={plan}
+                  isActive={selectedPlanId === plan.id}
+                  onClick={() => setSelectedPlanId(plan.id)}
+                />
+              ))
+            )}
           </div>
 
           <div className="bottom-section">
@@ -138,6 +156,19 @@ function App() {
           pointer-events: none;
         }
 
+        .skeleton-card {
+          background-color: var(--bg-color);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          height: 300px;
+          animation: skeleton-pulse 1.5s infinite;
+        }
+
+        @keyframes skeleton-pulse {
+          0%, 100% { background-color: var(--bg-color); }
+          50% { background-color: rgba(255, 255, 255, 0.1); }
+        }
+
         .bottom-section {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -152,12 +183,23 @@ function App() {
         }
 
         .error-message {
-          color: #ff4d4d;
-          background: rgba(255, 77, 77, 0.1);
-          padding: 10px;
+          color: #ff6b6b;
+          background: rgba(255, 107, 107, 0.1);
+          border: 1px solid rgba(255, 107, 107, 0.3);
+          padding: 12px 15px;
           border-radius: 8px;
           margin-bottom: 20px;
           font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .empty-state {
+          background-color: var(--bg-color);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          padding: 40px 20px;
+          text-align: center;
+          color: var(--text-secondary);
         }
 
         .persona-select {
@@ -168,6 +210,12 @@ function App() {
           border-radius: 6px;
           font-size: 12px;
           outline: none;
+          cursor: pointer;
+        }
+
+        .persona-select:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         @media (max-width: 1100px) {
