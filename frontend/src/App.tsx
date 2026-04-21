@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import SidebarNarrow from './components/SidebarNarrow';
 import SidebarWide from './components/SidebarWide';
 import FundingHeader from './components/FundingHeader';
@@ -13,11 +13,39 @@ import { useRecommendations } from './hooks/useRecommendations';
 function App() {
   const { data, isLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
+  const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
+
+  useEffect(() => {
+    setAppliedCustomAmount(null);
+    setFundingInputAmount('');
+  }, [data]);
 
   const plans = useMemo<PaymentPlan[]>(() => {
     if (!data) return [];
     
-    return data.recommendations.map((rec) => {
+    let recommendationsToUse = data.recommendations;
+    
+    if (appliedCustomAmount !== null) {
+      const allOffers = Object.values(data.offers);
+      const sortedOffers = [...allOffers].sort((a, b) => {
+        return Math.abs(a.fundingAmount - appliedCustomAmount) - Math.abs(b.fundingAmount - appliedCustomAmount);
+      });
+      
+      const top3 = sortedOffers.slice(0, 3);
+      recommendationsToUse = top3.map((offer, index) => ({
+        offerId: offer.offerId,
+        rank: index + 1,
+        headline: index === 0 ? `Closest match to £${appliedCustomAmount}` : 'Alternative option',
+        reasons: [
+          `Funding amount: £${offer.fundingAmount.toLocaleString()}`,
+          `Repayment: £${offer.repaymentAmount.toLocaleString()} at ${offer.holdbackPercentage}% sweep`,
+          `Estimated term: ${offer.daysUntilRepayment} days`
+        ]
+      }));
+    }
+    
+    return recommendationsToUse.map((rec) => {
       const offer = data.offers[rec.offerId];
       const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
 
@@ -31,11 +59,11 @@ function App() {
         reasons: rec.reasons
       };
     });
-  }, [data]);
+  }, [data, appliedCustomAmount]);
 
   // Set initial selected plan when data loads
   useMemo(() => {
-    if (plans.length > 0 && !selectedPlanId) {
+    if (plans.length > 0 && (!selectedPlanId || !plans.find(p => p.id === selectedPlanId))) {
       setSelectedPlanId(plans[0].id);
     }
   }, [plans, selectedPlanId]);
@@ -50,6 +78,7 @@ function App() {
   };
 
   const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+  const currentFundingAmount = fundingInputAmount !== '' ? fundingInputAmount : (selectedOffer?.fundingAmount || 0);
 
   return (
     <div className="app-layout">
@@ -81,9 +110,14 @@ function App() {
           
           {data && (
             <FundingInput 
-              amount={selectedOffer?.fundingAmount || 0}
-              onChange={() => {}} // In this MVP, the amount comes from the AI-selected offer
-              onConfirm={() => {}} 
+              amount={currentFundingAmount}
+              onChange={(val) => setFundingInputAmount(val)}
+              onConfirm={() => {
+                if (fundingInputAmount !== '') {
+                  setAppliedCustomAmount(Number(fundingInputAmount));
+                  setSelectedPlanId(null);
+                }
+              }} 
             />
           )}
 
