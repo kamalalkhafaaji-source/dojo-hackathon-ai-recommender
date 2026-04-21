@@ -72,7 +72,7 @@ public class OfferOrchestrator : IOfferOrchestrator
                 fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant",
                 fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
             ),
-            aiWarning
+            aiWarning,
             IsFallback: isFallback
         );
     }
