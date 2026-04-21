@@ -11,7 +11,7 @@ import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
+  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations('rossis-restaurant');
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
@@ -103,7 +103,6 @@ function App() {
                 className="persona-select"
                 disabled={isLoading}
               >
-                <option value="">Select a persona...</option>
                 <option value="rossis-restaurant">Rossi's Restaurant</option>
                 <option value="lucias-coffee">Lucia's Coffee</option>
                 <option value="salty-dog-bar">Salty Dog Bar</option>
@@ -129,7 +128,7 @@ function App() {
           )}
 
           <h2 className="section-title">
-            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : error ? 'System Error' : 'Select a persona to get started'}
+            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
           </h2>
 
           {error ? (
