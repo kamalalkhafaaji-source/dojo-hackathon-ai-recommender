@@ -16,7 +16,6 @@ public class GeminiRecommenderService
     }
 
     private readonly GeminiOptions _options;
-    private static readonly TimeSpan ApiTimeout = TimeSpan.FromSeconds(3);
 
     public async Task<RecommendationResponse?> GetRecommendationsAsync(RecommendationRequest request)
     {
@@ -68,59 +67,68 @@ public class GeminiRecommenderService
 
         try
         {
-            // Use a timeout to prevent long waits - if Gemini takes too long, return null for fallback
-            using (var cts = new CancellationTokenSource(ApiTimeout))
-            {
-                var response = await client.Models.GenerateContentAsync(
-                    model: "gemini-2.0-flash",
-                    contents: prompt,
-                    config: config,
-                    cancellationToken: cts.Token
-                );
+            var response = await client.Models.GenerateContentAsync(
+                model: "gemini-2.0-flash",
+                contents: prompt,
+                config: config
+            );
 
-                if (response == null)
-                {
-                    Console.WriteLine("Gemini API returned a null response. Returning null for fallback.");
-                    return null;
-                }
-
-                var text = response.Text;
-                if (string.IsNullOrEmpty(text))
-                {
-                    Console.WriteLine("Gemini API returned empty response. Returning null for fallback.");
-                    return null;
-                }
-
-                // Strip markdown fences if present
-                text = text.Trim();
-                if (text.StartsWith("```"))
-                {
-                    var firstNewline = text.IndexOf('\n');
-                    text = text[(firstNewline + 1)..];
-                    if (text.EndsWith("```"))
-                        text = text[..^3];
-                    text = text.Trim();
-                }
-
-                var result = JsonSerializer.Deserialize<RecommendationResponse>(text, JsonOpts);
-                if (result == null)
-                {
-                    Console.WriteLine("Failed to deserialize Gemini response. Returning null for fallback.");
-                    return null;
-                }
-
-                return result;
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            Console.WriteLine($"Gemini API request exceeded {ApiTimeout.TotalSeconds}s timeout. Returning null for fallback.");
-            return null;
+            if (response != null) return ParseResponse(response);
+            Console.WriteLine("Gemini API returned null on first attempt, retrying once...");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Gemini API error: {ex.GetType().Name} - {ex.Message}. Returning null for fallback.");
+            Console.WriteLine($"Gemini API error on first attempt: {ex.GetType().Name} - {ex.Message}. Retrying once...");
+        }
+
+        // One retry
+        try
+        {
+            var response = await client.Models.GenerateContentAsync(
+                model: "gemini-2.0-flash",
+                contents: prompt,
+                config: config
+            );
+
+            if (response == null)
+            {
+                Console.WriteLine("Gemini API returned null on retry. Returning null for fallback.");
+                return null;
+            }
+
+            return ParseResponse(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Gemini API error on retry: {ex.GetType().Name} - {ex.Message}. Returning null for fallback.");
             return null;
         }
+    }
+
+    private static RecommendationResponse? ParseResponse(GenerateContentResponse response)
+    {
+        var text = response.Text;
+        if (string.IsNullOrEmpty(text))
+        {
+            Console.WriteLine("Gemini API returned empty response. Returning null for fallback.");
+            return null;
+        }
+
+        // Strip markdown fences if present
+        text = text.Trim();
+        if (text.StartsWith("```"))
+        {
+            var firstNewline = text.IndexOf('\n');
+            text = text[(firstNewline + 1)..];
+            if (text.EndsWith("```"))
+                text = text[..^3];
+            text = text.Trim();
+        }
+
+        var result = JsonSerializer.Deserialize<RecommendationResponse>(text, JsonOpts);
+        if (result == null)
+            Console.WriteLine("Failed to deserialize Gemini response. Returning null for fallback.");
+
+        return result;
     }
 }
