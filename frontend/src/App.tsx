@@ -11,7 +11,7 @@ import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
 
 function App() {
-  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations();
+  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, refresh } = useRecommendations('rossis-restaurant');
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
@@ -39,10 +39,10 @@ function App() {
       recommendationsToUse = top3.map((offer, index) => ({
         offerId: offer.offerId,
         rank: index + 1,
-        headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString()}` : 'Alternative option',
+        headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}` : 'Alternative option',
         reasons: [
-          `Funding amount: £${offer.fundingAmount.toLocaleString()}`,
-          `Repayment: £${offer.repaymentAmount.toLocaleString()} at ${offer.holdbackPercentage}% sweep`,
+          `Funding amount: £${offer.fundingAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
+          `Repayment: £${offer.repaymentAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })} at ${offer.holdbackPercentage}% sweep`,
           `Estimated term: ${offer.daysUntilRepayment} days`
         ]
       }));
@@ -50,14 +50,14 @@ function App() {
     
     return recommendationsToUse.map((rec) => {
       const offer = data.offers[rec.offerId];
-      const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+      const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
 
       return {
         id: rec.offerId,
         amount: formatter.format(offer.fundingAmount),
         totalToPay: formatter.format(offer.repaymentAmount),
         paymentLabel: `${offer.holdbackPercentage}% of daily sales`,
-        badge: rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd',
+        badge: rec.tag || (rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd'),
         isBestFit: rec.rank === 1,
         reasons: rec.reasons
       };
@@ -80,8 +80,12 @@ function App() {
     }
   };
 
-  const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+  const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
   const currentFundingAmount = fundingInputAmount !== '' ? fundingInputAmount : (selectedOffer?.fundingAmount || 0);
+
+  // Calculate dynamic min and max from available offers
+  const minFundingAmount = data ? Math.min(...Object.values(data.offers).map(o => o.fundingAmount)) : 6000;
+  const maxFundingAmount = data ? Math.max(...Object.values(data.offers).map(o => o.fundingAmount)) : 25000;
 
   return (
     <div className="app-layout">
@@ -91,7 +95,7 @@ function App() {
       <main className="main-content">
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <FundingHeader />
+            <FundingHeader maxAmount={!isLoading && data ? maxFundingAmount : undefined} />
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
               <select 
@@ -103,7 +107,6 @@ function App() {
                 className="persona-select"
                 disabled={isLoading}
               >
-                <option value="">Select a persona...</option>
                 <option value="rossis-restaurant">Rossi's Restaurant</option>
                 <option value="lucias-coffee">Lucia's Coffee</option>
                 <option value="salty-dog-bar">Salty Dog Bar</option>
@@ -114,6 +117,8 @@ function App() {
           {data && (
             <FundingInput 
               amount={currentFundingAmount}
+              min={minFundingAmount}
+              max={maxFundingAmount}
               onChange={(val) => setFundingInputAmount(val)}
               onConfirm={() => {
                 if (fundingInputAmount !== '' && fundingInputAmount !== appliedCustomAmount) {
@@ -129,8 +134,18 @@ function App() {
           )}
 
           <h2 className="section-title">
-            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : error ? 'System Error' : 'Select a persona to get started'}
+            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
           </h2>
+
+          {data && !isLoading && !error && (
+            <div className={`ai-status-badge ${(data.isFallback || appliedCustomAmount !== null) ? 'fallback' : 'ai'}`}>
+              {(data.isFallback || appliedCustomAmount !== null) ? (
+                <><span>⚠️</span> This is not generated through AI</>
+              ) : (
+                <><span>✨</span> These are AI recommended responses</>
+              )}
+            </div>
+          )}
 
           {error ? (
             <ErrorMessage 
@@ -174,6 +189,7 @@ function App() {
 
               <div className="bottom-section">
                 <RefineOffers onRefine={(needs) => { setSelectedPlanId(null); refine(needs); }} isLoading={isLoading} />
+                {data && <RefineOffers onRefine={refine} isLoading={isLoading} />}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
                     fundingAmount={selectedPlan.amount}
@@ -198,6 +214,33 @@ function App() {
           font-size: 16px;
           font-weight: 500;
           margin-bottom: 20px;
+        }
+
+        .ai-status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 100px;
+          font-size: 12px;
+          font-weight: 500;
+          margin-bottom: 20px;
+        }
+
+        .ai-status-badge.ai {
+          background-color: #E6FFFA;
+          color: #234E52;
+          border: 1px solid #B2F5EA;
+        }
+
+        .ai-status-badge.fallback {
+          background-color: #FFF5F5;
+          color: #742A2A;
+          border: 1px solid #FED7D7;
+        }
+
+        .ai-status-badge span {
+          font-size: 14px;
         }
 
         .payment-plans {

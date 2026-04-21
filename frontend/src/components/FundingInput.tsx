@@ -30,7 +30,7 @@ const FundingInput: React.FC<FundingInputProps> = ({
           min={min}
           max={max}
         />
-        <span className="input-hint">From £{min.toLocaleString()}.00 to £{max.toLocaleString()}.00</span>
+        <span className="input-hint">From £{min.toLocaleString('en-GB', { maximumFractionDigits: 0 })} to £{max.toLocaleString('en-GB', { maximumFractionDigits: 0 })}</span>
         <button className="btn confirm-btn" onClick={onConfirm}>Confirm</button>
       </div>
 

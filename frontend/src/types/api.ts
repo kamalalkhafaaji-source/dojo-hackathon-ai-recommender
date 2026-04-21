@@ -12,6 +12,7 @@ export interface Recommendation {
   offerId: string;
   rank: number;
   headline: string;
+  tag?: string;
   reasons: string[];
 }
 
@@ -25,6 +26,7 @@ export interface EnrichedRecommendationResponse {
   offers: Record<string, McaOffer>;
   merchant: MerchantSummary;
   aiWarning?: string;
+  isFallback: boolean;
 }
 
 export interface RecommendationsInput {

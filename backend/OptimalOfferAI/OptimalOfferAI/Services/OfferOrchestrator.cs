@@ -46,6 +46,7 @@ public class OfferOrchestrator : IOfferOrchestrator
         List<Recommendation> recommendations;
         string? aiWarning = null;
 
+        bool isFallback = false;
         if (result == null || result.Recommendations == null || result.Recommendations.Count == 0)
         {
             Console.WriteLine($"AI service unavailable. Generating fallback recommendations for {personaKey}.");
@@ -57,6 +58,7 @@ public class OfferOrchestrator : IOfferOrchestrator
                             "We're showing our top offers by funding amount instead. " +
                             "Please try refining again in a moment.";
             }
+            isFallback = true;
         }
         else
         {
@@ -71,6 +73,7 @@ public class OfferOrchestrator : IOfferOrchestrator
                 fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
             ),
             aiWarning
+            IsFallback: isFallback
         );
     }
 
@@ -104,7 +107,8 @@ public class OfferOrchestrator : IOfferOrchestrator
                 OfferId: offer.OfferId,
                 Rank: rank,
                 Headline: $"Funding Option {rank}: ${offer.FundingAmount:F0}",
-                Reasons: reasons
+                Reasons: reasons,
+                Tag: rank == 1 ? "Best fit" : rank == 2 ? "2nd" : "3rd"
             ));
         }
 

@@ -45,13 +45,14 @@ public class GeminiRecommenderService
                             ["offerId"] = new Schema() { Type = Google.GenAI.Types.Type.String },
                             ["rank"] = new Schema() { Type = Google.GenAI.Types.Type.Integer },
                             ["headline"] = new Schema() { Type = Google.GenAI.Types.Type.String },
+                            ["tag"] = new Schema() { Type = Google.GenAI.Types.Type.String },
                             ["reasons"] = new Schema()
                             {
                                 Type = Google.GenAI.Types.Type.Array,
                                 Items = new Schema() { Type = Google.GenAI.Types.Type.String }
                             }
                         },
-                        Required = new List<string> { "offerId", "rank", "headline", "reasons" }
+                        Required = new List<string> { "offerId", "rank", "headline", "tag", "reasons" }
                     }
                 }
             },

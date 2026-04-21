@@ -5,6 +5,7 @@ public record EnrichedRecommendationResponse(
     Dictionary<string, McaOffer> Offers,
     MerchantSummary Merchant,
     string? AiWarning = null
+    bool IsFallback = false
 );
 
 public record MerchantSummary(
