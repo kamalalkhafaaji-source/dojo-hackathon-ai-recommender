@@ -39,10 +39,10 @@ function App() {
       recommendationsToUse = top3.map((offer, index) => ({
         offerId: offer.offerId,
         rank: index + 1,
-        headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString()}` : 'Alternative option',
+        headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}` : 'Alternative option',
         reasons: [
-          `Funding amount: £${offer.fundingAmount.toLocaleString()}`,
-          `Repayment: £${offer.repaymentAmount.toLocaleString()} at ${offer.holdbackPercentage}% sweep`,
+          `Funding amount: £${offer.fundingAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
+          `Repayment: £${offer.repaymentAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })} at ${offer.holdbackPercentage}% sweep`,
           `Estimated term: ${offer.daysUntilRepayment} days`
         ]
       }));
@@ -50,7 +50,7 @@ function App() {
     
     return recommendationsToUse.map((rec) => {
       const offer = data.offers[rec.offerId];
-      const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+      const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
 
       return {
         id: rec.offerId,
@@ -80,8 +80,12 @@ function App() {
     }
   };
 
-  const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+  const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
   const currentFundingAmount = fundingInputAmount !== '' ? fundingInputAmount : (selectedOffer?.fundingAmount || 0);
+
+  // Calculate dynamic min and max from available offers
+  const minFundingAmount = data ? Math.min(...Object.values(data.offers).map(o => o.fundingAmount)) : 6000;
+  const maxFundingAmount = data ? Math.max(...Object.values(data.offers).map(o => o.fundingAmount)) : 25000;
 
   return (
     <div className="app-layout">
@@ -91,7 +95,7 @@ function App() {
       <main className="main-content">
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <FundingHeader />
+            <FundingHeader maxAmount={!isLoading && data ? maxFundingAmount : undefined} />
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
               <select 
@@ -114,6 +118,8 @@ function App() {
           {data && (
             <FundingInput 
               amount={currentFundingAmount}
+              min={minFundingAmount}
+              max={maxFundingAmount}
               onChange={(val) => setFundingInputAmount(val)}
               onConfirm={() => {
                 if (fundingInputAmount !== '' && fundingInputAmount !== appliedCustomAmount) {
