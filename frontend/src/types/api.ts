@@ -24,6 +24,7 @@ export interface EnrichedRecommendationResponse {
   recommendations: Recommendation[];
   offers: Record<string, McaOffer>;
   merchant: MerchantSummary;
+  aiWarning?: string;
 }
 
 export interface RecommendationsInput {
