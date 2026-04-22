@@ -9,6 +9,7 @@ import RefineOffers from './components/RefineOffers';
 import RefinementContext from './components/RefinementContext';
 import SummaryBox from './components/SummaryBox';
 import ErrorMessage from './components/ErrorMessage';
+import QuirkyLoadingScreen from './components/QuirkyLoadingScreen';
 import { useRecommendations } from './hooks/useRecommendations';
 import { generatePersona } from './api/recommendations';
 
@@ -167,7 +168,7 @@ function App() {
             </div>
           </div>
           
-          {isLoading && !data && (
+          {isLocalLoading && !data && (
             <div className="section-title-row">
               <h2 className="section-title">Finding your best offers...</h2>
             </div>
@@ -207,23 +208,25 @@ function App() {
               message={error} 
               onRetry={refresh} 
             />
+          ) : isApiLoading ? (
+            <QuirkyLoadingScreen />
           ) : (
             <>
-              {!isLoading && plans.length === 0 && !error && data && (
+              {!isLocalLoading && plans.length === 0 && !error && data && (
                 <div className="empty-state">
                   <p>No recommendations available. Please select a different persona or try again.</p>
                 </div>
               )}
 
-              {!isLoading && data?.aiWarning && (
+              {!isLocalLoading && data?.aiWarning && (
                 <div className="ai-warning-banner">
                   <span className="ai-warning-icon">⚠️</span>
                   <span>{data.aiWarning}</span>
                 </div>
               )}
 
-              <div className={`payment-plans ${isLoading ? 'loading' : ''}`}>
-                {isLoading ? (
+              <div className={`payment-plans ${isLocalLoading ? 'loading' : ''}`}>
+                {isLocalLoading ? (
                   <>
                     <div className="skeleton-card"></div>
                     <div className="skeleton-card highlighted"></div>
