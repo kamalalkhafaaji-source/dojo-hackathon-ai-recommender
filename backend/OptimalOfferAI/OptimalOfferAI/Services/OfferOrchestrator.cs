@@ -78,9 +78,9 @@ public class OfferOrchestrator : IOfferOrchestrator
             suggestions = new List<SuggestedRefinement> {
                 new("I'm a bit nervous about the cost—can you explain how this fits my actual daily sales?", "I'm a bit nervous about the cost—can you explain how this fits my actual daily sales?"),
                 new("I'm ready to grow! Show me the most aggressive funding options for expansion.", "I'm ready to grow! Show me the most aggressive funding options for expansion."),
-                new("I'm just exploring right now. How would these offers help if I have a slow month?", "I'm just exploring right now. How would these offers help if I have a slow month?"),
                 new("I'm feeling a bit cautious. Could you show me some smaller, lower-risk offers first?", "I'm feeling a bit cautious. Could you show me some smaller, lower-risk offers first?")
             };
+
 
             if (isRefinement)
             {

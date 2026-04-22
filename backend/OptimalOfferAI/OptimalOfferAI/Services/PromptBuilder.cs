@@ -39,11 +39,10 @@ public static class PromptBuilder
             - **Local Event Correlation:** Invent or hypothesize a relevant upcoming local or industry event (e.g., "Summer festival season", "End-of-month payroll", "Holiday rush") that makes this funding perfectly timed.
             - **Competitive Side-by-Side:** If the merchant mentions a competitor's offer or a specific rate in their needs, explicitly compare the DOJO offer against it to show why DOJO is better.
             - **Bespoke Offer Names:** For each offer's `headline`, invent a creative, bespoke name for the plan instead of just "Funding Option". Examples: "The Espresso Upgrader", "Quiet Tuesday Buffer", "The Fast-Track Advance".
-            - **Suggested Refinements:** Generate exactly 4 `suggestedRefinements` based on the merchant's data. Each prompt should be a full, conversational sentence.
+            - **Suggested Refinements:** Generate exactly 3 `suggestedRefinements` based on the merchant's data. Each prompt should be a full, conversational sentence.
                 1. **Careful/Detail-focused:** A request asking for deep clarity on cost vs. their specific low-sales periods.
                 2. **Confident/Growth-ready:** A request for the absolute maximum funding to fuel a specific strategic expansion.
-                3. **Undecided/Exploring:** A request for a lower-commitment, flexible test amount.
-                4. **Apprehensive/Safety-first:** A request for smaller, lower-risk offers to build confidence in the process.
+                3. **Apprehensive/Safety-first:** A request for smaller, lower-risk offers to build confidence in the process.
             - **Health Score:** Calculate a dynamic `healthScore` (1 to 100) representing how comfortable the repayment will be. A lower holdback % and longer term on a business with steady turnover should score high (90+). A high holdback on fluctuating turnover should score lower (70).
             - **Projected Cashflow:** Generate an array of 6 integers (`projectedCashflow`) representing a realistic 6-month projected monthly revenue curve (e.g., [10000, 10500, 11000, ...]) assuming they take this funding.
             - **Conversational Scannability:** Each reason should start with a unique, snappy 2-3 word summary followed by a colon.
@@ -69,7 +68,6 @@ public static class PromptBuilder
                 }
               ],
               "suggestedRefinements": [
-                { "label": "the full conversational prompt string", "prompt": "the full conversational prompt string" },
                 { "label": "the full conversational prompt string", "prompt": "the full conversational prompt string" },
                 { "label": "the full conversational prompt string", "prompt": "the full conversational prompt string" },
                 { "label": "the full conversational prompt string", "prompt": "the full conversational prompt string" }
