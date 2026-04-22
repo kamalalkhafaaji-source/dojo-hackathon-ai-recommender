@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { suggestRefinement } from '../api/recommendations';
 import type { SuggestedRefinement } from '../types/api';
 
@@ -77,7 +77,7 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           />
           {isThinking && (
             <div className="thinking-overlay">
-              <span className="shimmer">Sidekick is thinking...</span>
+              <span className="shimmer">✨ Dojo is crafting your perfect request...</span>
             </div>
           )}
           {merchantContext && !isThinking && (
@@ -85,9 +85,8 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
               className={`magic-wand-btn ${isMagicLoading ? 'loading' : ''}`} 
               onClick={handleMagicWand} 
               disabled={isLoading || isMagicLoading}
-              title="Auto-suggest based on your business profile"
             >
-              ✨
+              Suggest ✨
             </button>
           )}
         </div>
@@ -160,28 +159,36 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
         .magic-wand-btn {
           position: absolute;
           right: 12px;
-          top: 16px;
-          background: none;
-          border: none;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: var(--tertiary-color);
+          border: 1px solid var(--tertiary-color);
+          border-radius: 8px;
+          padding: 8px 16px;
           cursor: pointer;
-          font-size: 16px;
-          opacity: 0.7;
-          transition: opacity 0.2s;
+          font-size: 11px;
+          font-weight: 700;
+          color: white;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 2px 4px rgba(108, 92, 231, 0.2);
+          z-index: 6;
         }
         
-        .magic-wand-btn:hover {
-          opacity: 1;
-        }
-        
-        .magic-wand-btn:disabled {
-          cursor: not-allowed;
-          opacity: 0.3;
+        .magic-wand-btn:hover:not(:disabled) {
+          background-color: var(--tertiary-hover);
+          border-color: var(--tertiary-hover);
+          transform: translateY(-52%) scale(1.02);
         }
 
-        .magic-wand-btn.loading {
-          animation: pulse 1s infinite;
-          opacity: 1;
-          pointer-events: none;
+        @keyframes pulse {
+          0% { transform: translateY(-50%) scale(1); opacity: 0.7; }
+          50% { transform: translateY(-50%) scale(1.1); opacity: 1; }
+          100% { transform: translateY(-50%) scale(1); opacity: 0.7; }
         }
 
         .thinking-overlay {
@@ -192,8 +199,8 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           bottom: 0;
           background: white;
           display: flex;
-          align-items: flex-start;
-          padding: 12px 16px;
+          align-items: center;
+          padding: 0 16px;
           border-radius: 12px;
           z-index: 5;
         }
@@ -210,12 +217,6 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           0% { opacity: 0.4; }
           50% { opacity: 1; }
           100% { opacity: 0.4; }
-        }
-
-        @keyframes pulse {
-          0% { transform: translateY(-50%) scale(1); opacity: 0.7; }
-          50% { transform: translateY(-50%) scale(1.3); opacity: 1; }
-          100% { transform: translateY(-50%) scale(1); opacity: 0.7; }
         }
 
         @media (max-width: 600px) {
@@ -257,8 +258,8 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           background-color: var(--input-bg);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          padding: 12px 16px;
-          padding-right: 40px;
+          padding: 16px;
+          padding-right: 120px; /* Space for the 'Suggest' button on the right */
           border-radius: 12px;
           box-sizing: border-box;
           font-size: 14px;
