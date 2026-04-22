@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchRecommendations } from '../api/recommendations';
 import type { EnrichedRecommendationResponse } from '../types/api';
 
@@ -11,12 +11,20 @@ export function useRecommendations(initialPersona?: string) {
   const [refineTrigger, setRefineTrigger] = useState(0);
   const [isELI5, setIsELI5] = useState(false);
 
+  // Track last request to prevent duplicate hits (especially in StrictMode)
+  const lastRequestRef = useRef<string>("");
+
   const getRecommendations = useCallback(async (p?: string, needs?: string, eli5?: boolean) => {
     // Don't fetch if no persona is selected
     if (!p) {
       setData(null);
       return;
     }
+
+    // Create a signature of the current request
+    const requestSignature = JSON.stringify({ p, needs, eli5, trigger: refineTrigger });
+    if (requestSignature === lastRequestRef.current) return;
+    lastRequestRef.current = requestSignature;
 
     setIsLoading(true);
     setError(null);

@@ -227,18 +227,19 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 24px;
+          margin-bottom: 16px; /* Reduced from 24px */
         }
 
         .plan-amount-label {
           color: var(--text-secondary);
           font-size: 13px;
-          margin-bottom: 6px;
+          margin-bottom: 4px;
         }
 
         .plan-amount {
           font-size: 20px;
-          font-weight: 600;
+          font-weight: 700;
+          color: var(--accent-color);
         }
 
         .badge {
@@ -246,7 +247,7 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           color: #4B5563;
           padding: 6px 14px;
           border-radius: 100px;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 600;
           white-space: nowrap;
           transition: all 0.2s ease;
@@ -258,22 +259,31 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         }
 
         .plan-details {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
           margin-bottom: 24px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--border-color);
         }
 
         .detail-row {
-          margin-bottom: 16px;
+          margin-bottom: 0;
         }
 
         .detail-label {
           color: var(--text-secondary);
-          font-size: 13px;
-          margin-bottom: 4px;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 2px;
         }
 
         .detail-value {
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 500;
+          color: var(--text-primary);
         }
 
         .why-fits {
@@ -426,8 +436,7 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
 
         .cashflow-chart {
           margin-bottom: 24px;
-          padding-top: 12px;
-          border-top: 1px solid var(--border-color);
+          padding-top: 0;
         }
 
         .chart-label {
