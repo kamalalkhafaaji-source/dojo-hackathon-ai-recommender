@@ -203,13 +203,15 @@ function App() {
           </div>
 
           {data && currentUserNeeds && !isLoading && !error && !data.isFallback && (
-            <RefinementContext 
-              needs={currentUserNeeds} 
-              onClear={() => {
-                setSelectedPlanId(null);
-                refine(""); // Clear the needs
-              }}
-            />
+            <div className="refinement-banner-container">
+              <RefinementContext 
+                needs={currentUserNeeds} 
+                onClear={() => {
+                  setSelectedPlanId(null);
+                  refine(""); // Clear the needs
+                }}
+              />
+            </div>
           )}
 
           {error ? (
@@ -317,6 +319,11 @@ function App() {
 
         .ai-status-badge span {
           font-size: 14px;
+        }
+
+        .refinement-banner-container {
+          margin-bottom: 40px;
+          width: 100%;
         }
 
         .payment-plans {

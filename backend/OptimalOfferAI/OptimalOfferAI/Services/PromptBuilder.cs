@@ -25,13 +25,12 @@ public static class PromptBuilder
 
             Rules:
             - **Humanize & Personalize:** Speak directly to the merchant like a trusted, empathetic advisor ("you", "your business"). Use their business type or recent trends contextually (e.g., "As a busy coffee shop", "To help with your recent dip in sales").
-            - **Avoid Number Overload but Do the Math:** Do NOT overwhelm the merchant with a barrage of raw numbers, complex math, or financial jargon. Instead, *pre-calculate* things for them if it helps clarify the value (e.g., "This saves you around £X compared to standard options", or "Based on your average sales, you'd only be repaying roughly £Y on a quiet Tuesday"). Take the mental load off the customer.
-            - Consider affordability, amount vs need, cost of funding, term length, provider track record, peer behaviour, and seasonality. 
+            - **Conversational Scannability:** Blend warm, empathetic language with the "Action: Description" format. Each reason should start with a snappy summary (e.g., "Protect your cashflow:", "Cover your spend:", "Join local peers:") but follow with a friendly, helpful explanation.
+            - **Predictable Categorization:** Always provide exactly 3 reasons in this exact order: 1. Affordability/Cashflow, 2. Strategic/Business Fit, 3. Peer Reassurance.
+            - **Aggressive Highlighting:** You MUST wrap EVERY single number, amount, percentage, or currency in Markdown bold tags (e.g., **£15,000**, **12%**, **250 days**, **£50/day**). This is critical for scannability.
+            - **Brevity:** Keep explanations focused and helpful. Total length for each reason should be around 15–20 words.
             - Each recommendation MUST have a short, conversational headline (e.g. "Great for steady cash flow", "A gentle option for quiet days").
-            - Each recommendation MUST have exactly 3 reasons. 
-            - **Tag:** Generate a concise, 2-word phrase summarizing the primary benefit or reason for this offer (e.g. "Best fit", "Growth focus", "Quick cash").
-            - **Compare and Contrast:** Explain *why* this offer is better than others qualitatively (e.g. "This gives you the funding you need without tying up too much of your daily takings on slower days").
-            - **Gentle Peer Reassurance:** Provide confidence by casually mentioning what similar businesses do (e.g., "Many other local restaurants find this amount perfect for handling seasonal shifts").
+            - **Tag:** Generate a concise, 2-word phrase summarizing the primary benefit for this offer (e.g. "Best fit", "Growth focus", "Quick cash").
             - Return ONLY valid JSON matching this exact schema, with no extra text:
 
             {

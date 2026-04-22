@@ -23,6 +23,16 @@ interface PaymentPlanCardProps {
  * PaymentPlanCard component displays a single funding offer.
  */
 export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive, onClick }) => {
+  const renderReason = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="highlight">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
   return (
     <div 
       className={`plan-card ${isActive ? 'active' : ''} ${plan.isHighlighted ? 'highlighted' : ''}`} 
@@ -65,12 +75,19 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
       </div>
 
       <div className="why-fits">
-        <h4>Why this fits you</h4>
-        <ul>
-          {plan.reasons.map((reason, index) => (
-            <li key={index}>{reason}</li>
-          ))}
-        </ul>
+        <h4 className={plan.isHighlighted ? 'recommended-title' : ''}>
+          {plan.isHighlighted ? "Dojo's expert recommendation" : 'Why this fits you'}
+        </h4>
+        <div className={`insights-box ${plan.isHighlighted ? 'recommended-insights' : ''}`}>
+          <ul>
+            {plan.reasons.map((reason, index) => (
+              <li key={index} className={index === 0 ? 'primary-reason' : ''}>
+                <span className="bullet-icon">{plan.isHighlighted ? '✨' : '✓'}</span>
+                <span>{renderReason(reason)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <style>{`
@@ -193,18 +210,64 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           font-weight: 600;
           margin-top: 0;
           margin-bottom: 12px;
+          transition: all 0.2s;
+        }
+
+        .why-fits h4.recommended-title {
+          font-size: 17px;
+          font-weight: 800;
+          color: var(--text-primary);
+        }
+
+        .insights-box {
+          background-color: #F9FAFB;
+          border-radius: 12px;
+          padding: 16px;
+          transition: all 0.2s ease;
+        }
+
+        .insights-box.recommended-insights {
+          background-color: rgba(25, 98, 84, 0.05);
+          border: 1px solid rgba(25, 98, 84, 0.1);
         }
 
         .why-fits ul {
           margin: 0;
-          padding-left: 20px;
+          padding: 0;
+          list-style: none;
+        }
+
+        .why-fits li {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          margin-bottom: 16px;
           color: var(--text-secondary);
           font-size: 14px;
           line-height: 1.6;
         }
 
-        .why-fits li {
-          margin-bottom: 10px;
+        .why-fits li:last-child {
+          margin-bottom: 0;
+        }
+
+        .primary-reason {
+          font-size: 15px !important;
+          color: var(--text-primary) !important;
+          font-weight: 600;
+        }
+
+        .bullet-icon {
+          color: var(--accent-color);
+          font-weight: bold;
+          font-size: 14px;
+          line-height: 1.4;
+          flex-shrink: 0;
+        }
+
+        .highlight {
+          color: var(--accent-color);
+          font-weight: 800;
         }
       `}</style>
     </div>
