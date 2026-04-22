@@ -9,6 +9,7 @@ export interface PaymentPlan {
   expirationDate: string;
   badge?: string;
   isBestFit?: boolean;
+  isHighlighted?: boolean;
   reasons: string[];
 }
 
@@ -24,9 +25,14 @@ interface PaymentPlanCardProps {
 export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive, onClick }) => {
   return (
     <div 
-      className={`plan-card ${isActive ? 'active' : ''}`} 
+      className={`plan-card ${isActive ? 'active' : ''} ${plan.isHighlighted ? 'highlighted' : ''}`} 
       onClick={onClick}
     >
+      {plan.isHighlighted && (
+        <div className="recommendation-banner">
+          Recommended by DOJO
+        </div>
+      )}
       <div className="plan-header">
         <div>
           <div className="plan-amount-label">Funding amount</div>
@@ -86,6 +92,43 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         .plan-card.active {
           border-color: var(--accent-color);
           background-color: rgba(25, 98, 84, 0.03);
+        }
+
+        .plan-card.highlighted {
+          transform: scale(1.08);
+          box-shadow: 0 20px 50px rgba(25, 98, 84, 0.15);
+          z-index: 2;
+          border: 2px solid rgba(25, 98, 84, 0.3);
+          position: relative;
+          overflow: visible; /* Allow banner to pop */
+        }
+
+        .recommendation-banner {
+          position: absolute;
+          top: -14px; /* Pull it up to sit on the top edge */
+          left: 20px;
+          right: 20px;
+          background-color: var(--accent-color);
+          color: white;
+          padding: 6px 0;
+          border-radius: 100px; /* Fully rounded pill shape */
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          text-align: center;
+          z-index: 3;
+          box-shadow: 0 4px 12px rgba(25, 98, 84, 0.25);
+          border: 2px solid white; /* Helps it pop and 'fade' into the white layout context */
+        }
+
+        .plan-card.highlighted .plan-header {
+          margin-top: 12px; /* Adjusted spacing for the pill banner */
+        }
+
+        .plan-card.highlighted.active {
+          border-color: var(--accent-color);
+          border-width: 3px;
         }
 
         .plan-header {

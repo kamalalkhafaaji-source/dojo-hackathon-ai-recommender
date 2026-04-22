@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 interface RefineOffersProps {
   onRefine: (needs: string) => void;
   isLoading?: boolean;
+  minimal?: boolean;
 }
 
 /**
  * RefineOffers component for users to provide custom requirements.
  */
-const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
+const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minimal }) => {
   const [value, setValue] = useState('');
 
   const handleSubmit = () => {
@@ -18,24 +19,32 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
   };
 
   return (
-    <div className="not-right">
-      <h3>Not quite right?</h3>
-      <p>Tell us more about what you need and we'll refine these offers.</p>
-      <input 
-        type="text" 
-        placeholder="e.g. I need at least £30k, and a lower daily sweep" 
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-        disabled={isLoading}
-      />
-      <button 
-        className="btn btn-primary btn-full no-margin-bottom"
-        onClick={handleSubmit}
-        disabled={isLoading || !value.trim()}
-      >
-        {isLoading ? 'Refining...' : 'Refine offers'}
-      </button>
+    <div className={`not-right ${minimal ? 'minimal' : ''}`}>
+      {minimal ? (
+        <p className="minimal-label">Not quite right? Tell us what you're looking for and we'll refine your offers.</p>
+      ) : (
+        <>
+          <h3>Not quite right?</h3>
+          <p>Tell us more about what you need and we'll refine these offers.</p>
+        </>
+      )}
+      <div className="input-row">
+        <input 
+          type="text" 
+          placeholder="e.g. I need at least £30k, and a lower daily sweep" 
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+          disabled={isLoading}
+        />
+        <button 
+          className={`btn btn-primary ${minimal ? '' : 'btn-full'} no-margin-bottom`}
+          onClick={handleSubmit}
+          disabled={isLoading || !value.trim()}
+        >
+          {isLoading ? 'Refining...' : 'Refine offers'}
+        </button>
+      </div>
 
       <style>{`
         .not-right {
@@ -43,6 +52,29 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
           border: 1px solid var(--border-color);
           border-radius: 20px;
           padding: 24px;
+        }
+
+        .not-right.minimal {
+          background-color: #FFFFFF;
+          border: 1px solid #E5E7EB;
+          padding: 24px;
+          border-radius: 20px;
+          width: 100%;
+          margin: 32px 0;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .minimal-label {
+          font-size: 14px;
+          color: var(--text-secondary);
+          margin-bottom: 12px;
+          margin-top: 0;
+        }
+
+        .input-row {
+          display: flex;
+          gap: 12px;
+          align-items: center;
         }
 
         .not-right h3 {
@@ -60,16 +92,19 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading }) => {
         }
 
         .not-right input {
-          width: 100%;
+          flex-grow: 1;
           background-color: var(--input-bg);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          padding: 16px;
+          padding: 12px 16px;
           border-radius: 12px;
-          margin-bottom: 16px;
           box-sizing: border-box;
-          font-size: 15px;
+          font-size: 14px;
           transition: border-color 0.2s ease;
+        }
+
+        .not-right:not(.minimal) input {
+          margin-bottom: 16px;
         }
 
         .not-right input:focus {

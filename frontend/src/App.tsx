@@ -23,12 +23,26 @@ function App() {
   useEffect(() => {
     setAppliedCustomAmount(null);
     setFundingInputAmount('');
+    
+    // Always reset selection when fresh data comes from the API
+    if (data) {
+      const isAiGenerated = !data.isFallback && appliedCustomAmount === null;
+      if (isAiGenerated && data.recommendations.length >= 2) {
+        // AI response: always select the middle offer (which we've mapped to index 1)
+        // Note: we wait for 'plans' useMemo to finish, so we do it in a small timeout 
+        // or just rely on the selection useMemo logic below being triggered by data change.
+        setSelectedPlanId(null); // Clear first to force trigger
+      } else {
+        setSelectedPlanId(null);
+      }
+    }
   }, [data]);
 
   const plans = useMemo<PaymentPlan[]>(() => {
     if (!data) return [];
     
     let recommendationsToUse = data.recommendations;
+    const isAiGenerated = data && !data.isFallback && appliedCustomAmount === null;
     
     if (appliedCustomAmount !== null) {
       const allOffers = Object.values(data.offers);
@@ -49,9 +63,18 @@ function App() {
         repaymentTerm: offer.daysUntilRepayment.toString(),
         expirationDate: offer.expirationDate
       }));
+    } else if (isAiGenerated && recommendationsToUse.length === 3) {
+      // Reorder so that Rank 1 is in the middle (index 1)
+      // Original order: [Rank 1, Rank 2, Rank 3] -> Goal: [Rank 2, Rank 1, Rank 3]
+      const r1 = recommendationsToUse.find(r => r.rank === 1);
+      const r2 = recommendationsToUse.find(r => r.rank === 2);
+      const r3 = recommendationsToUse.find(r => r.rank === 3);
+      if (r1 && r2 && r3) {
+        recommendationsToUse = [r2, r1, r3];
+      }
     }
     
-    return recommendationsToUse.map((rec) => {
+    return recommendationsToUse.map((rec, index) => {
       const offer = data.offers[rec.offerId];
       const formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
 
@@ -64,17 +87,29 @@ function App() {
         expirationDate: offer.expirationDate,
         badge: rec.tag || (rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd'),
         isBestFit: rec.rank === 1,
+        isHighlighted: isAiGenerated && rec.rank === 1, // Highlight the best one (Rank 1), regardless of index
         reasons: rec.reasons
       };
     });
   }, [data, appliedCustomAmount]);
 
-  // Set initial selected plan when data loads
+  // Set initial selected plan when data loads or changes
   useMemo(() => {
-    if (plans.length > 0 && (!selectedPlanId || !plans.find(p => p.id === selectedPlanId))) {
-      setSelectedPlanId(plans[0].id);
+    if (plans.length > 0) {
+      const isAiGenerated = data && !data.isFallback && appliedCustomAmount === null;
+      
+      // If AI generated and we haven't selected the middle one yet for THIS data set
+      if (isAiGenerated && plans.length >= 2) {
+        const middleOfferId = plans[1].id;
+        if (selectedPlanId !== middleOfferId) {
+          setSelectedPlanId(middleOfferId);
+        }
+      } else if (!isAiGenerated && selectedPlanId !== null && !plans.find(p => p.id === selectedPlanId)) {
+        // Non-AI fallback: ensure we don't have a stale ID
+        setSelectedPlanId(null);
+      }
     }
-  }, [plans, selectedPlanId]);
+  }, [plans, data, appliedCustomAmount]);
 
   const selectedPlan = plans.find(p => p.id === selectedPlanId) || plans[0];
   const selectedOffer = data?.offers[selectedPlanId || ''] || (data ? Object.values(data.offers)[0] : null);
@@ -138,19 +173,34 @@ function App() {
             />
           )}
 
-          <h2 className="section-title">
-            {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
-          </h2>
+          <div className="section-title-row">
+            <h2 className="section-title">
+              {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
+            </h2>
 
-          {data && !isLoading && !error && (
-            <div className={`ai-status-badge ${(data.isFallback || appliedCustomAmount !== null) ? 'fallback' : 'ai'}`}>
-              {(data.isFallback || appliedCustomAmount !== null) ? (
-                <><span>⚠️</span> This is not generated through AI</>
-              ) : (
-                <><span>✨</span> These are AI recommended responses</>
-              )}
-            </div>
-          )}
+            {data && !isLoading && !error && (
+              <div className={`ai-status-badge ${(data.isFallback || appliedCustomAmount !== null) ? 'fallback' : 'ai'}`}>
+                {(data.isFallback || appliedCustomAmount !== null) ? (
+                  <><span>⚠️</span> This is not generated through AI</>
+                ) : (
+                  <><span>✨</span> These are AI recommended responses</>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="refinement-row">
+            {data && (
+              <RefineOffers 
+                minimal 
+                onRefine={(needs) => { 
+                  setSelectedPlanId(null); 
+                  refine(needs); 
+                }} 
+                isLoading={isLoading} 
+              />
+            )}
+          </div>
 
           {data && currentUserNeeds && !isLoading && !error && !data.isFallback && (
             <RefinementContext 
@@ -203,20 +253,14 @@ function App() {
               </div>
 
               <div className="bottom-section">
-                {data && (
-                  <RefineOffers 
-                    onRefine={(needs) => { 
-                      setSelectedPlanId(null); 
-                      refine(needs); 
-                    }} 
-                    isLoading={isLoading} 
-                  />
-                )}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
                     fundingAmount={selectedPlan.amount}
                     fixedFee={formatter.format(selectedOffer.repaymentAmount - selectedOffer.fundingAmount)}
                     totalToPay={selectedPlan.totalToPay}
+                    payment={selectedPlan.paymentLabel}
+                    repaymentTerm={`${selectedPlan.repaymentTerm} days`}
+                    expiryDate={selectedPlan.expirationDate}
                     onContinue={handleContinue}
                   />
                 )}
@@ -231,10 +275,22 @@ function App() {
       </main>
 
       <style>{`
+        .section-title-row {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+
         .section-title {
           font-size: 16px;
           font-weight: 500;
-          margin-bottom: 20px;
+          margin-bottom: 0;
+        }
+
+        .refinement-row {
+          width: 100%;
+          margin-bottom: 24px;
         }
 
         .ai-status-badge {
@@ -245,7 +301,6 @@ function App() {
           border-radius: 100px;
           font-size: 12px;
           font-weight: 500;
-          margin-bottom: 20px;
         }
 
         .ai-status-badge.ai {
@@ -267,10 +322,11 @@ function App() {
         .payment-plans {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
+          gap: 32px;
           margin-bottom: 40px;
           transition: opacity 0.2s ease;
           position: relative;
+          align-items: center;
         }
 
         .payment-plans.loading {
@@ -292,9 +348,10 @@ function App() {
         }
 
         .bottom-section {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+          width: 100%;
         }
 
         .footer-text {
