@@ -24,6 +24,12 @@ const SidebarWide: React.FC = () => {
           flex-shrink: 0;
         }
 
+        @media (max-width: 768px) {
+          .sidebar-wide {
+            display: none;
+          }
+        }
+
         .sidebar-header {
           padding: 24px 24px 16px 24px;
           font-size: 15px;

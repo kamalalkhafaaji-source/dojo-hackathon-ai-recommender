@@ -60,8 +60,17 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           padding: 24px;
           border-radius: 20px;
           width: 100%;
+          max-width: 1000px; /* Constrain width on large screens */
           margin: 32px 0;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+          box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+        }
+
+        @media (max-width: 768px) {
+          .not-right.minimal {
+            margin: 24px 0;
+            padding: 20px;
+          }
         }
 
         .minimal-label {
@@ -75,6 +84,22 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           display: flex;
           gap: 12px;
           align-items: center;
+        }
+
+        @media (max-width: 600px) {
+          .input-row {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          
+          .not-right input {
+            width: 100%;
+            margin-bottom: 12px; /* Add spacing between input and button when stacked */
+          }
+
+          .not-right:not(.minimal) input {
+            margin-bottom: 16px;
+          }
         }
 
         .not-right h3 {

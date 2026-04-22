@@ -18,20 +18,19 @@ body {
   color: var(--text-primary);
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto; /* Enable scrolling globally */
   -webkit-font-smoothing: antialiased;
 }
 
 .app-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh; /* Use min-height */
   width: 100%;
-  overflow: hidden;
 }
 
 .main-content {
   flex-grow: 1;
-  overflow-y: auto;
   display: flex;
   justify-content: center;
 }
@@ -39,8 +38,24 @@ body {
 .container {
   max-width: 1400px;
   width: 100%;
-  padding: 80px 60px 80px 60px;
+  padding: 80px 60px;
   box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    padding: 60px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 32px; /* Increased side padding from 20px to 32px */
+  }
+  
+  .app-layout {
+    flex-direction: column;
+  }
 }
 
 /* Base button styles */

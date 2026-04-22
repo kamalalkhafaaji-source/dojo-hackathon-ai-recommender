@@ -47,6 +47,12 @@ const SidebarNarrow: React.FC = () => {
           flex-shrink: 0;
         }
 
+        @media (max-width: 768px) {
+          .sidebar-narrow {
+            display: none;
+          }
+        }
+
         .nav-icon {
           width: 36px;
           height: 36px;

@@ -418,10 +418,30 @@ function App() {
 
         @media (max-width: 1100px) {
           .payment-plans {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+          /* Remove highlight scaling on smaller screens to avoid overlap */
+          .skeleton-card, .plan-card.highlighted {
+            transform: none;
+          }
+        }
+
+        @media (max-width: 850px) {
+          .section-title-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+        }
+
+        @media (max-width: 700px) {
+          .payment-plans {
             grid-template-columns: 1fr;
           }
-          .bottom-section {
-            grid-template-columns: 1fr;
+          
+          .container {
+            padding-top: 40px;
           }
         }
       `}</style>
