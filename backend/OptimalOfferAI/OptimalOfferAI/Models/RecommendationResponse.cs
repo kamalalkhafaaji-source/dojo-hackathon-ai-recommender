@@ -2,7 +2,8 @@ namespace OptimalOfferAI.Models;
 
 public record RecommendationResponse(
     string ChainOfThought,
-    List<Recommendation> Recommendations
+    List<Recommendation> Recommendations,
+    List<SuggestedRefinement> SuggestedRefinements
 );
 
 public record Recommendation(

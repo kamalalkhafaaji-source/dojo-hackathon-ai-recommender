@@ -61,9 +61,23 @@ public class GeminiRecommenderService
                         },
                         Required = new List<string> { "offerId", "rank", "headline", "tag", "healthScore", "projectedCashflow", "reasons" }
                     }
+                },
+                ["suggestedRefinements"] = new Schema()
+                {
+                    Type = Google.GenAI.Types.Type.Array,
+                    Items = new Schema()
+                    {
+                        Type = Google.GenAI.Types.Type.Object,
+                        Properties = new Dictionary<string, Schema>()
+                        {
+                            ["label"] = new Schema() { Type = Google.GenAI.Types.Type.String },
+                            ["prompt"] = new Schema() { Type = Google.GenAI.Types.Type.String }
+                        },
+                        Required = new List<string> { "label", "prompt" }
+                    }
                 }
             },
-            Required = new List<string> { "chainOfThought", "recommendations" }
+            Required = new List<string> { "chainOfThought", "recommendations", "suggestedRefinements" }
         };
 
         var config = new GenerateContentConfig()

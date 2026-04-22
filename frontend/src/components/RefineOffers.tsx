@@ -1,38 +1,40 @@
 import React, { useState } from 'react';
 import { suggestRefinement } from '../api/recommendations';
+import type { SuggestedRefinement } from '../types/api';
 
 interface RefineOffersProps {
   onRefine: (needs: string) => void;
   isLoading?: boolean;
   minimal?: boolean;
   merchantContext?: string;
+  suggestedRefinements?: SuggestedRefinement[];
 }
 
-/**
- * RefineOffers component for users to provide custom requirements.
- */
-const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minimal, merchantContext }) => {
+const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minimal, merchantContext, suggestedRefinements }) => {
   const [value, setValue] = useState('');
   const [isMagicLoading, setIsMagicLoading] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
 
-  const handleSubmit = () => {
-    if (value.trim()) {
-      onRefine(value);
-    }
+  const handlePromptClick = (prompt: string) => {
+    if (isLoading || isMagicLoading) return;
+    setValue(prompt);
+    onRefine(prompt); // Call instantly
   };
 
   const handleMagicWand = async () => {
     if (!merchantContext || isMagicLoading) return;
     
     setIsMagicLoading(true);
-    setValue(''); // Clear current value to show typewriter
+    setIsThinking(true);
+    setValue(''); // Clear current value
     
     try {
       const suggestion = await suggestRefinement({ merchantContext });
+      setIsThinking(false); // Stop thinking animation
       
       // Simulate typewriter into the input field
       let currentText = "";
-      const speed = 15; // ms per char
+      const speed = 10; // ms per char
       
       for (let i = 0; i < suggestion.length; i++) {
         currentText += suggestion[i];
@@ -41,9 +43,16 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
       }
     } catch (e) {
       console.error(e);
+      setIsThinking(false);
       setValue("I need funding to help grow my business."); // Fallback
     } finally {
       setIsMagicLoading(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (value.trim()) {
+      onRefine(value);
     }
   };
 
@@ -59,15 +68,19 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
       )}
       <div className="input-row">
         <div className="input-wrapper">
-          <input 
-            type="text" 
+          <textarea 
             placeholder="e.g. I need at least £30k, and a lower daily sweep" 
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             disabled={isLoading || isMagicLoading}
+            rows={3}
           />
-          {merchantContext && (
+          {isThinking && (
+            <div className="thinking-overlay">
+              <span className="shimmer">Sidekick is thinking...</span>
+            </div>
+          )}
+          {merchantContext && !isThinking && (
             <button 
               className={`magic-wand-btn ${isMagicLoading ? 'loading' : ''}`} 
               onClick={handleMagicWand} 
@@ -82,10 +95,29 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           className={`btn btn-primary ${minimal ? '' : 'btn-full'} no-margin-bottom`}
           onClick={handleSubmit}
           disabled={isLoading || isMagicLoading || !value.trim()}
+          style={minimal ? { alignSelf: 'stretch', height: 'auto', minWidth: '140px' } : {}}
         >
           {isLoading ? 'Refining...' : 'Refine offers'}
         </button>
       </div>
+
+      {suggestedRefinements && suggestedRefinements.length > 0 && (
+        <div className="suggestions-container">
+          <span className="suggestions-label">Recommended requests:</span>
+          <div className="suggestion-chips">
+            {suggestedRefinements.map((s, i) => (
+              <button 
+                key={i} 
+                className="suggestion-chip full-prompt"
+                onClick={() => handlePromptClick(s.prompt)}
+                disabled={isLoading || isMagicLoading}
+              >
+                {s.prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <style>{`
         .not-right {
@@ -106,13 +138,6 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           box-sizing: border-box; /* Ensure padding doesn't cause overflow */
         }
 
-        @media (max-width: 768px) {
-          .not-right.minimal {
-            margin: 24px 0;
-            padding: 20px;
-          }
-        }
-
         .minimal-label {
           font-size: 14px;
           color: var(--text-secondary);
@@ -123,20 +148,19 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
         .input-row {
           display: flex;
           gap: 12px;
-          align-items: center;
+          align-items: flex-start;
         }
-
+        
         .input-wrapper {
           position: relative;
           flex-grow: 1;
           display: flex;
         }
-
+        
         .magic-wand-btn {
           position: absolute;
           right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
+          top: 16px;
           background: none;
           border: none;
           cursor: pointer;
@@ -160,6 +184,34 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           pointer-events: none;
         }
 
+        .thinking-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: white;
+          display: flex;
+          align-items: flex-start;
+          padding: 12px 16px;
+          border-radius: 12px;
+          z-index: 5;
+        }
+
+        .shimmer {
+          font-size: 14px;
+          color: var(--accent-color);
+          font-weight: 500;
+          font-style: italic;
+          animation: shimmer-pulse 1.5s infinite;
+        }
+
+        @keyframes shimmer-pulse {
+          0% { opacity: 0.4; }
+          50% { opacity: 1; }
+          100% { opacity: 0.4; }
+        }
+
         @keyframes pulse {
           0% { transform: translateY(-50%) scale(1); opacity: 0.7; }
           50% { transform: translateY(-50%) scale(1.3); opacity: 1; }
@@ -176,12 +228,12 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
             width: 100%;
           }
 
-          .not-right input {
+          .not-right textarea {
             width: 100%;
-            margin-bottom: 12px; /* Add spacing between input and button when stacked */
+            margin-bottom: 12px;
           }
 
-          .not-right:not(.minimal) input {
+          .not-right:not(.minimal) textarea {
             margin-bottom: 16px;
           }
         }
@@ -200,26 +252,77 @@ const RefineOffers: React.FC<RefineOffersProps> = ({ onRefine, isLoading, minima
           line-height: 1.5;
         }
 
-        .not-right input {
-          width: 100%;
+        .not-right textarea {
+          flex-grow: 1;
           background-color: var(--input-bg);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
           padding: 12px 16px;
-          padding-right: 40px; /* Space for magic wand */
+          padding-right: 40px;
           border-radius: 12px;
           box-sizing: border-box;
           font-size: 14px;
           transition: border-color 0.2s ease;
+          resize: none;
+          font-family: inherit;
         }
 
-        .not-right input:focus {
+        .not-right textarea:focus {
           outline: none;
           border-color: var(--accent-color);
         }
 
         .no-margin-bottom {
           margin-bottom: 0 !important;
+        }
+
+        .suggestions-container {
+          margin-top: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .suggestions-label {
+          font-size: 11px;
+          color: var(--text-secondary);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+
+        .suggestion-chips {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .suggestion-chip.full-prompt {
+          background: #FFFFFF;
+          border: 1px solid #E5E7EB;
+          color: #4B5563;
+          padding: 12px 16px;
+          border-radius: 12px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: left;
+          line-height: 1.4;
+          height: 100%;
+        }
+
+        .suggestion-chip.full-prompt:hover:not(:disabled) {
+          border-color: var(--accent-color);
+          background-color: rgba(25, 98, 84, 0.02);
+          color: var(--accent-color);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .suggestion-chip:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
       `}</style>
     </div>

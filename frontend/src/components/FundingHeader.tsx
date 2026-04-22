@@ -12,8 +12,6 @@ const FundingHeader: React.FC<FundingHeaderProps> = ({ maxAmount }) => {
     <header className="funding-header">
       <div className="header-logo">
         <h1>DOJO</h1>
-        <span className="logo-divider">X</span>
-        <h1 className="logo-partner">Y O U L E N D</h1>
       </div>
 
       {maxAmount !== undefined && (
@@ -39,15 +37,6 @@ const FundingHeader: React.FC<FundingHeaderProps> = ({ maxAmount }) => {
           margin: 0;
           font-size: 24px;
           font-weight: 500;
-        }
-
-        .logo-divider {
-          color: var(--text-secondary);
-          font-size: 12px;
-        }
-
-        .logo-partner {
-          font-weight: 300 !important;
         }
 
         .header-subtitle {

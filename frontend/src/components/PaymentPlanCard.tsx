@@ -5,6 +5,7 @@ import Typewriter from './Typewriter';
 
 export interface PaymentPlan {
   id: string;
+  provider: string;
   amount: string;
   totalToPay: string;
   paymentLabel: string;
@@ -93,6 +94,10 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
       </div>
 
       <div className="plan-details">
+        <div className="detail-row">
+          <div className="detail-label">Partner</div>
+          <div className="detail-value">{plan.provider}</div>
+        </div>
         <div className="detail-row">
           <div className="detail-label">Total to pay</div>
           <div className="detail-value">{plan.totalToPay}</div>

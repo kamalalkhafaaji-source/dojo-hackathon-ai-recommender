@@ -21,20 +21,6 @@ function App() {
 
   const isLoading = isApiLoading || isLocalLoading;
 
-  const handleGeneratePersona = async () => {
-    setIsLocalLoading(true);
-    try {
-      const p = await generatePersona();
-      alert(`AI generated a new persona for: ${p.merchant.businessProfile.tradingName}`);
-      // Note: Full integration would require updating the backend mock storage, 
-      // but for this hackathon we can just show the capability.
-    } catch (err) {
-      alert("Failed to generate dynamic persona.");
-    } finally {
-      setIsLocalLoading(false);
-    }
-  };
-
   useEffect(() => {
     setAppliedCustomAmount(null);
     setFundingInputAmount('');
@@ -68,6 +54,7 @@ function App() {
       const top3 = sortedOffers.slice(0, 3);
       recommendationsToUse = top3.map((offer, index) => ({
         offerId: offer.offerId,
+        provider: offer.provider,
         rank: index + 1,
         headline: index === 0 ? `Closest match to £${appliedCustomAmount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}` : 'Alternative option',
         reasons: [
@@ -95,6 +82,7 @@ function App() {
 
       return {
         id: rec.offerId,
+        provider: offer.provider,
         amount: formatter.format(offer.fundingAmount),
         totalToPay: formatter.format(offer.repaymentAmount),
         paymentLabel: `${offer.holdbackPercentage}% of daily sales`,
@@ -162,9 +150,6 @@ function App() {
                   <span className="slider round"></span>
                 </label>
               </div>
-              <button className="btn btn-primary btn-sm" onClick={handleGeneratePersona} disabled={isLoading} style={{ padding: '8px 16px', fontSize: '13px' }}>
-                ✨ Random
-              </button>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
               <select 
                 value={currentPersona || ''} 
@@ -182,30 +167,11 @@ function App() {
             </div>
           </div>
           
-          {data && (
-            <FundingInput 
-              amount={currentFundingAmount}
-              min={minFundingAmount}
-              max={maxFundingAmount}
-              onChange={(val) => setFundingInputAmount(val)}
-              onConfirm={() => {
-                if (fundingInputAmount !== '' && fundingInputAmount !== appliedCustomAmount) {
-                  setIsLocalLoading(true);
-                  setTimeout(() => {
-                    setAppliedCustomAmount(Number(fundingInputAmount));
-                    setSelectedPlanId(null);
-                    setIsLocalLoading(false);
-                  }, 500);
-                }
-              }} 
-            />
+          {isLoading && !data && (
+            <div className="section-title-row">
+              <h2 className="section-title">Finding your best offers...</h2>
+            </div>
           )}
-
-          <div className="section-title-row">
-            <h2 className="section-title">
-              {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
-            </h2>
-          </div>
 
           <div className="refinement-row">
             {data && (
@@ -217,7 +183,9 @@ function App() {
                 }} 
                 isLoading={isLoading} 
                 merchantContext={JSON.stringify(data.merchant)}
-              />
+                suggestedRefinements={data.suggestedRefinements}
+                />
+
             )}
           </div>
 
@@ -258,7 +226,7 @@ function App() {
                 {isLoading ? (
                   <>
                     <div className="skeleton-card"></div>
-                    <div className="skeleton-card"></div>
+                    <div className="skeleton-card highlighted"></div>
                     <div className="skeleton-card"></div>
                   </>
                 ) : (
@@ -274,6 +242,24 @@ function App() {
               </div>
 
               <div className="bottom-section">
+                {data && (
+                  <FundingInput 
+                    amount={currentFundingAmount}
+                    min={minFundingAmount}
+                    max={maxFundingAmount}
+                    onChange={(val) => setFundingInputAmount(val)}
+                    onConfirm={() => {
+                      if (fundingInputAmount !== '' && fundingInputAmount !== appliedCustomAmount) {
+                        setIsLocalLoading(true);
+                        setTimeout(() => {
+                          setAppliedCustomAmount(Number(fundingInputAmount));
+                          setSelectedPlanId(null);
+                          setIsLocalLoading(false);
+                        }, 500);
+                      }
+                    }} 
+                  />
+                )}
                 {selectedPlan && selectedOffer && (
                   <SummaryBox 
                     fundingAmount={selectedPlan.amount}
@@ -296,6 +282,7 @@ function App() {
           display: flex;
           align-items: center;
           gap: 16px;
+          margin-top: 24px;
           margin-bottom: 20px;
         }
 
@@ -315,7 +302,7 @@ function App() {
           align-items: center;
           gap: 6px;
           padding: 6px 12px;
-          border-radius: 100px;
+          border-radius: 12px;
           font-size: 12px;
           font-weight: 500;
         }
@@ -413,8 +400,10 @@ function App() {
         .payment-plans {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 32px;
-          margin-bottom: 40px;
+          gap: 40px;
+          margin-top: 48px;
+          margin-bottom: 64px;
+          padding: 20px 0;
           transition: opacity 0.2s ease;
           position: relative;
           align-items: center;
@@ -433,6 +422,10 @@ function App() {
           animation: skeleton-pulse 1.5s infinite;
         }
 
+        .skeleton-card.highlighted {
+          transform: scale(1.08);
+        }
+
         @keyframes skeleton-pulse {
           0%, 100% { background-color: var(--bg-color); }
           50% { background-color: rgba(0, 0, 0, 0.05); }
@@ -443,6 +436,7 @@ function App() {
           flex-direction: column;
           gap: 32px;
           width: 100%;
+          margin-top: 40px;
         }
 
         .error-message {

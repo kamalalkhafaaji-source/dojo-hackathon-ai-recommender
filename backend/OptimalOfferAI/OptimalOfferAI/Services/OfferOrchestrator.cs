@@ -66,6 +66,7 @@ public class OfferOrchestrator : IOfferOrchestrator
 
         // If AI service fails, generate fallback recommendations based on highest funding amount
         List<Recommendation> recommendations;
+        List<SuggestedRefinement> suggestions = new();
         string chainOfThought = "N/A";
         string? aiWarning = null;
 
@@ -74,6 +75,12 @@ public class OfferOrchestrator : IOfferOrchestrator
         {
             Console.WriteLine($"AI service unavailable. Generating fallback recommendations for {personaKey}.");
             recommendations = GenerateFallbackRecommendations(fixture.Offers);
+            suggestions = new List<SuggestedRefinement> {
+                new("I'm a bit nervous about the cost—can you explain how this fits my actual daily sales?", "I'm a bit nervous about the cost—can you explain how this fits my actual daily sales?"),
+                new("I'm ready to grow! Show me the most aggressive funding options for expansion.", "I'm ready to grow! Show me the most aggressive funding options for expansion."),
+                new("I'm just exploring right now. How would these offers help if I have a slow month?", "I'm just exploring right now. How would these offers help if I have a slow month?"),
+                new("I'm feeling a bit cautious. Could you show me some smaller, lower-risk offers first?", "I'm feeling a bit cautious. Could you show me some smaller, lower-risk offers first?")
+            };
 
             if (isRefinement)
             {
@@ -86,6 +93,7 @@ public class OfferOrchestrator : IOfferOrchestrator
         else
         {
             recommendations = result.Recommendations;
+            suggestions = result.SuggestedRefinements ?? new();
             chainOfThought = result.ChainOfThought ?? "N/A";
         }
 
@@ -97,6 +105,7 @@ public class OfferOrchestrator : IOfferOrchestrator
                 fixture.Merchant.BusinessProfile.TradingName ?? "Unknown Merchant",
                 fixture.Merchant.BusinessProfile.Industry ?? "Unknown Industry"
             ),
+            suggestions,
             aiWarning,
             IsFallback: isFallback
         );

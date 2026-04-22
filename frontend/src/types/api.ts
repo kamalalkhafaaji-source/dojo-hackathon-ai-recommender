@@ -23,11 +23,17 @@ export interface MerchantSummary {
   industry: string;
 }
 
+export interface SuggestedRefinement {
+  label: string;
+  prompt: string;
+}
+
 export interface EnrichedRecommendationResponse {
   chainOfThought?: string;
   recommendations: Recommendation[];
   offers: Record<string, McaOffer>;
   merchant: MerchantSummary;
+  suggestedRefinements: SuggestedRefinement[];
   isFallback: boolean;
   aiWarning?: string;
 }
