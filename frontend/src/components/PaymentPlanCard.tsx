@@ -23,6 +23,19 @@ interface PaymentPlanCardProps {
  * PaymentPlanCard component displays a single funding offer.
  */
 export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive, onClick }) => {
+  // Calculate days until expiry
+  const getDaysUntil = (dateStr: string) => {
+    try {
+      const expiry = new Date(dateStr);
+      const now = new Date();
+      const diffTime = expiry.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? `${diffDays} days` : 'Expiring soon';
+    } catch {
+      return 'N/A';
+    }
+  };
+
   const renderReason = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
@@ -69,8 +82,8 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           <div className="detail-value">~{plan.repaymentTerm} days</div>
         </div>
         <div className="detail-row">
-          <div className="detail-label">Offer expires</div>
-          <div className="detail-value">{plan.expirationDate}</div>
+          <div className="detail-label">Offer expires in</div>
+          <div className="detail-value">{getDaysUntil(plan.expirationDate)}</div>
         </div>
       </div>
 

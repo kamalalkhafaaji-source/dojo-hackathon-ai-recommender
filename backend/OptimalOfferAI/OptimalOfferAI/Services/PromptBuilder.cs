@@ -25,11 +25,12 @@ public static class PromptBuilder
 
             Rules:
             - **Humanize & Personalize:** Speak directly to the merchant like a trusted, empathetic advisor ("you", "your business"). Use their business type or recent trends contextually (e.g., "As a busy coffee shop", "To help with your recent dip in sales").
-            - **Conversational Scannability:** Blend warm, empathetic language with the "Action: Description" format. Each reason should start with a snappy summary (e.g., "Protect your cashflow:", "Cover your spend:", "Join local peers:") but follow with a friendly, helpful explanation.
-            - **Predictable Categorization:** Always provide exactly 3 reasons in this exact order: 1. Affordability/Cashflow, 2. Strategic/Business Fit, 3. Peer Reassurance.
+            - **Conversational Scannability:** Each reason should start with a unique, snappy 2-3 word summary followed by a colon (e.g., "Protect your cashflow:", "Cover your spend:", "Join local peers:", "Manage seasonal dips:").
+            - **Unique Reasoning:** Ensure the reasons for each offer feel distinct and specific to that offer's data (amount, fee, term). Avoid using the same three categories for every card if they don't apply.
             - **Aggressive Highlighting:** You MUST wrap EVERY single number, amount, percentage, or currency in Markdown bold tags (e.g., **£15,000**, **12%**, **250 days**, **£50/day**). This is critical for scannability.
             - **Brevity:** Keep explanations focused and helpful. Total length for each reason should be around 15–20 words.
-            - Each recommendation MUST have a short, conversational headline (e.g. "Great for steady cash flow", "A gentle option for quiet days").
+            - Each recommendation MUST have exactly 3 reasons.
+            - Each recommendation MUST have a short, conversational headline.
             - **Tag:** Generate a concise, 2-word phrase summarizing the primary benefit for this offer (e.g. "Best fit", "Growth focus", "Quick cash").
             - Return ONLY valid JSON matching this exact schema, with no extra text:
 
