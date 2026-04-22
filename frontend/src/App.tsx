@@ -10,15 +10,30 @@ import RefinementContext from './components/RefinementContext';
 import SummaryBox from './components/SummaryBox';
 import ErrorMessage from './components/ErrorMessage';
 import { useRecommendations } from './hooks/useRecommendations';
+import { generatePersona } from './api/recommendations';
 
 function App() {
-  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, currentUserNeeds, refresh } = useRecommendations('rossis-restaurant');
+  const { data, isLoading: isApiLoading, error, refine, changePersona, currentPersona, currentUserNeeds, isELI5, toggleELI5, refresh } = useRecommendations('rossis-restaurant');
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
   const [isLocalLoading, setIsLocalLoading] = useState(false);
 
   const isLoading = isApiLoading || isLocalLoading;
+
+  const handleGeneratePersona = async () => {
+    setIsLocalLoading(true);
+    try {
+      const p = await generatePersona();
+      alert(`AI generated a new persona for: ${p.merchant.businessProfile.tradingName}`);
+      // Note: Full integration would require updating the backend mock storage, 
+      // but for this hackathon we can just show the capability.
+    } catch (err) {
+      alert("Failed to generate dynamic persona.");
+    } finally {
+      setIsLocalLoading(false);
+    }
+  };
 
   useEffect(() => {
     setAppliedCustomAmount(null);
@@ -88,7 +103,10 @@ function App() {
         badge: rec.tag || (rec.rank === 1 ? 'Best fit' : rec.rank === 2 ? '2nd' : '3rd'),
         isBestFit: rec.rank === 1,
         isHighlighted: isAiGenerated && rec.rank === 1, // Highlight the best one (Rank 1), regardless of index
-        reasons: rec.reasons
+        reasons: rec.reasons,
+        healthScore: rec.healthScore || 50,
+        rawDetails: JSON.stringify(offer),
+        merchantContext: JSON.stringify(data.merchant)
       };
     });
   }, [data, appliedCustomAmount]);
@@ -136,7 +154,17 @@ function App() {
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <FundingHeader maxAmount={!isLoading && data ? maxFundingAmount : undefined} />
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <div className="eli5-container">
+                <span className="eli5-label">ELI5 Mode</span>
+                <label className="switch">
+                  <input type="checkbox" checked={isELI5} onChange={toggleELI5} disabled={isLoading} />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={handleGeneratePersona} disabled={isLoading} style={{ padding: '8px 16px', fontSize: '13px' }}>
+                ✨ Random
+              </button>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Persona:</span>
               <select 
                 value={currentPersona || ''} 
@@ -177,16 +205,6 @@ function App() {
             <h2 className="section-title">
               {isLoading && !data ? 'Finding your best offers...' : data ? `Recommended for ${data.merchant.tradingName}:` : 'System Error'}
             </h2>
-
-            {data && !isLoading && !error && (
-              <div className={`ai-status-badge ${(data.isFallback || appliedCustomAmount !== null) ? 'fallback' : 'ai'}`}>
-                {(data.isFallback || appliedCustomAmount !== null) ? (
-                  <><span>⚠️</span> This is not generated through AI</>
-                ) : (
-                  <><span>✨</span> These are AI recommended responses</>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="refinement-row">
@@ -198,6 +216,7 @@ function App() {
                   refine(needs); 
                 }} 
                 isLoading={isLoading} 
+                merchantContext={JSON.stringify(data.merchant)}
               />
             )}
           </div>
@@ -269,10 +288,6 @@ function App() {
               </div>
             </>
           )}
-
-          <footer className="footer-text">
-            If you'd like to discuss your offers, contact us
-          </footer>
         </div>
       </main>
 
@@ -321,6 +336,75 @@ function App() {
           font-size: 14px;
         }
 
+        .eli5-container {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #F3F4F6;
+          padding: 6px 12px;
+          border-radius: 12px;
+        }
+
+        .eli5-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 34px;
+          height: 20px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        /* The slider */
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #D1D5DB;
+          transition: .4s;
+          border-radius: 34px;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 14px;
+          width: 14px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+
+        input:checked + .slider {
+          background-color: var(--accent-color);
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+          transform: translateX(14px);
+        }
+
         .refinement-banner-container {
           margin-bottom: 40px;
           width: 100%;
@@ -359,13 +443,6 @@ function App() {
           flex-direction: column;
           gap: 32px;
           width: 100%;
-        }
-
-        .footer-text {
-          margin-top: 40px;
-          margin-bottom: 120px;
-          color: var(--text-secondary);
-          font-size: 12px;
         }
 
         .error-message {

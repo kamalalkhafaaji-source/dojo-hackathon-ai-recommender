@@ -40,14 +40,52 @@ public class RecommendationsController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the error for monitoring
             Console.WriteLine($"Error in GetRecommendations: {ex.GetType().Name} - {ex.Message}");
-            
-            // Return a user-friendly error response instead of 500
             return BadRequest(new { 
                 message = "Unable to generate recommendations at this time. Please try again later.",
                 error = ex.Message 
             });
         }
     }
+
+    [HttpPost("simulate")]
+    public async Task<IActionResult> SimulateImpact([FromBody] SimulateRequest request, [FromServices] GeminiRecommenderService gemini)
+    {
+        var response = await gemini.SimulateImpactAsync(request.OfferDetails, request.MerchantContext, request.UserMessage);
+        return Ok(new { response });
+    }
+
+    [HttpPost("deepdive")]
+    public async Task<IActionResult> DeepDive([FromBody] DeepDiveRequest request, [FromServices] GeminiRecommenderService gemini)
+    {
+        var response = await gemini.GetDeepDiveAsync(request.Reason, request.OfferDetails);
+        return Ok(new { response });
+    }
+
+    [HttpPost("faq")]
+    public async Task<IActionResult> GenerateFaq([FromBody] FaqRequest request, [FromServices] GeminiRecommenderService gemini)
+    {
+        var response = await gemini.GenerateFaqAsync(request.OfferDetails, request.MerchantContext);
+        return Ok(new { faqs = response });
+    }
+
+    [HttpPost("suggest-refinement")]
+    public async Task<IActionResult> SuggestRefinement([FromBody] SuggestRefinementRequest request, [FromServices] GeminiRecommenderService gemini)
+    {
+        var response = await gemini.SuggestRefinementAsync(request.MerchantContext);
+        return Ok(new { suggestion = response });
+    }
+
+    [HttpGet("generate-persona")]
+    public async Task<IActionResult> GeneratePersona([FromServices] GeminiRecommenderService gemini)
+    {
+        var result = await gemini.GenerateDynamicPersonaAsync();
+        if (result == null) return StatusCode(500, "Failed to generate persona.");
+        return Ok(result);
+    }
 }
+
+public record SimulateRequest(string OfferDetails, string MerchantContext, string UserMessage);
+public record DeepDiveRequest(string Reason, string OfferDetails);
+public record FaqRequest(string OfferDetails, string MerchantContext);
+public record SuggestRefinementRequest(string MerchantContext);

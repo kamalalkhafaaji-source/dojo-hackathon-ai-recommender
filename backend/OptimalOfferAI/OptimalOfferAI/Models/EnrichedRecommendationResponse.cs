@@ -1,6 +1,7 @@
 namespace OptimalOfferAI.Models;
 
 public record EnrichedRecommendationResponse(
+    string ChainOfThought,
     List<Recommendation> Recommendations,
     Dictionary<string, McaOffer> Offers,
     MerchantSummary Merchant,

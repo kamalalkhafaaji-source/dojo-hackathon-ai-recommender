@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import WhatIfChat from './WhatIfChat';
+import { deepDiveReason } from '../api/recommendations';
+import Typewriter from './Typewriter';
 
 export interface PaymentPlan {
   id: string;
@@ -11,6 +14,10 @@ export interface PaymentPlan {
   isBestFit?: boolean;
   isHighlighted?: boolean;
   reasons: string[];
+  healthScore: number;
+  projectedCashflow?: number[];
+  rawDetails: string;
+  merchantContext: string;
 }
 
 interface PaymentPlanCardProps {
@@ -23,6 +30,8 @@ interface PaymentPlanCardProps {
  * PaymentPlanCard component displays a single funding offer.
  */
 export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive, onClick }) => {
+  const [deepDive, setDeepDive] = useState<{ reason: string; text: string; loading: boolean } | null>(null);
+
   // Calculate days until expiry
   const getDaysUntil = (dateStr: string) => {
     try {
@@ -33,6 +42,21 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
       return diffDays > 0 ? `${diffDays} days` : 'Expiring soon';
     } catch {
       return 'N/A';
+    }
+  };
+
+  const handleDeepDive = async (e: React.MouseEvent, reason: string) => {
+    e.stopPropagation(); // prevent card selection
+    if (deepDive?.reason === reason && !deepDive.loading) {
+      setDeepDive(null); // toggle off
+      return;
+    }
+    setDeepDive({ reason, text: '', loading: true });
+    try {
+      const result = await deepDiveReason({ reason, offerDetails: plan.rawDetails });
+      setDeepDive({ reason, text: result, loading: false });
+    } catch (err) {
+      setDeepDive({ reason, text: 'Unable to load explanation.', loading: false });
     }
   };
 
@@ -53,7 +77,7 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
     >
       {plan.isHighlighted && (
         <div className="recommendation-banner">
-          Recommended by DOJO
+          Dojo's expert recommendation
         </div>
       )}
       <div className="plan-header">
@@ -74,7 +98,10 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
           <div className="detail-value">{plan.totalToPay}</div>
         </div>
         <div className="detail-row">
-          <div className="detail-label">Payment</div>
+          <div className="detail-label tooltip-wrapper">
+            Payment <span className="tooltip-icon">?</span>
+            <div className="tooltip">The percentage of your daily card takings automatically swept to repay the advance.</div>
+          </div>
           <div className="detail-value">{plan.paymentLabel}</div>
         </div>
         <div className="detail-row">
@@ -87,21 +114,51 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         </div>
       </div>
 
+      {plan.projectedCashflow && plan.projectedCashflow.length > 0 && (
+        <div className="cashflow-chart">
+          <div className="chart-label">6-Month Cashflow Projection</div>
+          <div className="bars">
+            {plan.projectedCashflow.map((val, i) => {
+              const max = Math.max(...plan.projectedCashflow!);
+              const height = (val / max) * 100;
+              return (
+                <div key={i} className="bar-wrapper" title={`Month ${i+1}: £${val}`}>
+                  <div className="bar" style={{ height: `${height}%` }}></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="why-fits">
         <h4 className={plan.isHighlighted ? 'recommended-title' : ''}>
           {plan.isHighlighted ? "Dojo's expert recommendation" : 'Why this fits you'}
         </h4>
+        
         <div className={`insights-box ${plan.isHighlighted ? 'recommended-insights' : ''}`}>
           <ul>
             {plan.reasons.map((reason, index) => (
               <li key={index} className={index === 0 ? 'primary-reason' : ''}>
                 <span className="bullet-icon">{plan.isHighlighted ? '✨' : '✓'}</span>
-                <span>{renderReason(reason)}</span>
+                <div>
+                  <span>{renderReason(reason)}</span>
+                  <button className="deep-dive-btn" onClick={(e) => handleDeepDive(e, reason)}>
+                    {deepDive?.reason === reason ? 'Hide' : 'Explain'}
+                  </button>
+                  {deepDive?.reason === reason && (
+                    <div className="deep-dive-content">
+                      {deepDive.loading ? 'Thinking...' : <Typewriter text={deepDive.text} speed={10} />}
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
         </div>
       </div>
+
+      <WhatIfChat offerDetails={plan.rawDetails} merchantContext={plan.merchantContext} />
 
       <style>{`
         .plan-card {
@@ -281,6 +338,129 @@ export const PaymentPlanCard: React.FC<PaymentPlanCardProps> = ({ plan, isActive
         .highlight {
           color: var(--accent-color);
           font-weight: 800;
+        }
+
+        .deep-dive-btn {
+          background: none;
+          border: none;
+          color: var(--tertiary-color);
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          padding: 0 4px;
+          text-decoration: underline;
+        }
+
+        .deep-dive-content {
+          margin-top: 8px;
+          padding: 8px 12px;
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          font-size: 12px;
+          color: var(--text-primary);
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .tooltip-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .tooltip-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #E5E7EB;
+          color: #4B5563;
+          font-size: 10px;
+          font-weight: bold;
+          cursor: help;
+        }
+
+        .tooltip {
+          visibility: hidden;
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #1A1A1A;
+          color: white;
+          padding: 6px 10px;
+          border-radius: 6px;
+          font-size: 11px;
+          width: 180px;
+          text-align: center;
+          z-index: 10;
+          opacity: 0;
+          transition: opacity 0.2s;
+          pointer-events: none;
+          margin-bottom: 8px;
+        }
+
+        .tooltip::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -4px;
+          border-width: 4px;
+          border-style: solid;
+          border-color: #1A1A1A transparent transparent transparent;
+        }
+
+        .tooltip-wrapper:hover .tooltip {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        .cashflow-chart {
+          margin-bottom: 24px;
+          padding-top: 12px;
+          border-top: 1px solid var(--border-color);
+        }
+
+        .chart-label {
+          font-size: 11px;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 12px;
+          text-align: center;
+        }
+
+        .bars {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          height: 40px;
+          gap: 4px;
+        }
+
+        .bar-wrapper {
+          flex: 1;
+          height: 100%;
+          display: flex;
+          align-items: flex-end;
+          background: rgba(0,0,0,0.02);
+          border-radius: 2px;
+        }
+
+        .bar {
+          width: 100%;
+          background: var(--accent-color);
+          border-radius: 2px;
+          opacity: 0.7;
+          transition: height 0.5s ease-out;
+        }
+
+        .plan-card.highlighted .bar {
+          opacity: 1;
         }
       `}</style>
     </div>

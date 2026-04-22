@@ -9,8 +9,9 @@ export function useRecommendations(initialPersona?: string) {
   const [persona, setPersona] = useState<string | undefined>(initialPersona);
   const [userNeeds, setUserNeeds] = useState<string | undefined>();
   const [refineTrigger, setRefineTrigger] = useState(0);
+  const [isELI5, setIsELI5] = useState(false);
 
-  const getRecommendations = useCallback(async (p?: string, needs?: string) => {
+  const getRecommendations = useCallback(async (p?: string, needs?: string, eli5?: boolean) => {
     // Don't fetch if no persona is selected
     if (!p) {
       setData(null);
@@ -21,7 +22,7 @@ export function useRecommendations(initialPersona?: string) {
     setError(null);
     setData(null); // Clear existing data so skeletons show during reload
     try {
-      const result = await fetchRecommendations({ persona: p, userNeeds: needs });
+      const result = await fetchRecommendations({ persona: p, userNeeds: needs, isELI5: eli5 });
       setData(result);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
@@ -34,8 +35,8 @@ export function useRecommendations(initialPersona?: string) {
   }, []);
 
   useEffect(() => {
-    getRecommendations(persona, userNeeds);
-  }, [persona, userNeeds, refineTrigger, getRecommendations]);
+    getRecommendations(persona, userNeeds, isELI5);
+  }, [persona, userNeeds, refineTrigger, isELI5, getRecommendations]);
 
   const refine = (needs: string) => {
     setUserNeeds(needs);
@@ -49,6 +50,10 @@ export function useRecommendations(initialPersona?: string) {
     setRefineTrigger(0);
   };
 
+  const toggleELI5 = () => {
+    setIsELI5(prev => !prev);
+  };
+
   return {
     data,
     isLoading,
@@ -57,6 +62,8 @@ export function useRecommendations(initialPersona?: string) {
     changePersona,
     currentPersona: persona,
     currentUserNeeds: userNeeds,
-    refresh: () => getRecommendations(persona, userNeeds)
+    isELI5,
+    toggleELI5,
+    refresh: () => getRecommendations(persona, userNeeds, isELI5)
   };
 }
