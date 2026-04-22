@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+interface QuirkyLoadingScreenProps {
+  isFinished: boolean;
+  onComplete: () => void;
+}
 
 const quirkyMessages = [
   "Firing up the financial engines...",
@@ -13,43 +18,79 @@ const quirkyMessages = [
 // Average expected time in milliseconds
 const EXPECTED_LOAD_TIME = 25000;
 
-const QuirkyLoadingScreen: React.FC = () => {
+const QuirkyLoadingScreen: React.FC<QuirkyLoadingScreenProps> = ({ isFinished, onComplete }) => {
   const [messageIndex, setMessageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const progressRef = useRef(0);
+  const isFinishedRef = useRef(isFinished);
+  const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
+    isFinishedRef.current = isFinished;
+    if (isFinished) {
+      setProgress(100);
+      progressRef.current = 100;
+      setMessageIndex(quirkyMessages.length - 1); // Jump to last message
+      
+      // Wait 1 second at 100% before triggering completion
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFinished, onComplete]);
+
+  useEffect(() => {
+    if (isFinishedRef.current) return;
+
     // Handle message changes
     const messageInterval = setInterval(() => {
       setMessageIndex((prevIndex) => {
-        if (prevIndex < quirkyMessages.length - 1) {
+        if (prevIndex < quirkyMessages.length - 2) {
           return prevIndex + 1;
         }
         return prevIndex;
       });
     }, Math.floor(EXPECTED_LOAD_TIME / quirkyMessages.length));
 
-    // Handle smooth progress bar animation
-    const startTime = Date.now();
-    const progressInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
+    // Jumpy progress bar logic
+    const jumpProgress = () => {
+      if (isFinishedRef.current) return;
+
+      const elapsed = Date.now() - startTimeRef.current;
+      const expectedProgress = Math.min((elapsed / EXPECTED_LOAD_TIME) * 95, 95);
       
-      // Calculate progress based on expected time, but slow down drastically after 90%
-      // to "hang" a little bit if it takes longer than 25 seconds
-      let newProgress = (elapsed / EXPECTED_LOAD_TIME) * 100;
+      const current = progressRef.current;
       
-      if (newProgress > 90) {
-        // Asymptotically approach 99%
-        newProgress = 90 + (9 * (1 - Math.exp(-(elapsed - EXPECTED_LOAD_TIME * 0.9) / 5000)));
+      if (current < 95) {
+        // Random jump, but bounded by expected progress over time
+        // We only jump if current is lagging behind expected
+        if (current <= expectedProgress) {
+          const jump = Math.floor(Math.random() * 8) + 2;
+          let nextProgress = current + jump;
+          
+          // Don't let it exceed expected progress by too much to ensure it doesn't hit 95 too early
+          const maxAllowed = Math.max(expectedProgress + 5, 5); 
+          if (nextProgress > maxAllowed) nextProgress = maxAllowed;
+          if (nextProgress > 95) nextProgress = 95;
+          
+          progressRef.current = nextProgress;
+          setProgress(nextProgress);
+        }
       }
       
-      if (newProgress > 99) newProgress = 99; // Cap at 99% until actually finished
-      
-      setProgress(newProgress);
-    }, 50); // 20fps for smooth bar
+      // Schedule next jump between 0.5s and 1.5s
+      if (progressRef.current < 95) {
+        const nextJumpDelay = Math.floor(Math.random() * 1000) + 500;
+        setTimeout(jumpProgress, nextJumpDelay);
+      }
+    };
+
+    // Start jumping
+    setTimeout(jumpProgress, 500);
 
     return () => {
       clearInterval(messageInterval);
-      clearInterval(progressInterval);
     };
   }, []);
 
@@ -119,7 +160,8 @@ const QuirkyLoadingScreen: React.FC = () => {
           height: 100%;
           background: linear-gradient(90deg, var(--accent-color), #2BB8A0);
           border-radius: 100px;
-          transition: width 0.1s linear;
+          /* Faster transition for jumpy feel */
+          transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
           position: relative;
         }
         

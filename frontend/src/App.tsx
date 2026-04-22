@@ -19,8 +19,15 @@ function App() {
   const [fundingInputAmount, setFundingInputAmount] = useState<number | ''>('');
   const [appliedCustomAmount, setAppliedCustomAmount] = useState<number | null>(null);
   const [isLocalLoading, setIsLocalLoading] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
 
-  const isLoading = isApiLoading || isLocalLoading;
+  const isLoading = isApiLoading || isLocalLoading || showLoadingScreen;
+
+  useEffect(() => {
+    if (isApiLoading) {
+      setShowLoadingScreen(true);
+    }
+  }, [isApiLoading]);
 
   useEffect(() => {
     setAppliedCustomAmount(null);
@@ -174,32 +181,36 @@ function App() {
             </div>
           )}
 
-          <div className="refinement-row">
-            {data && (
-              <RefineOffers 
-                minimal 
-                onRefine={(needs) => { 
-                  setSelectedPlanId(null); 
-                  refine(needs); 
-                }} 
-                isLoading={isLoading} 
-                merchantContext={JSON.stringify(data.merchant)}
-                suggestedRefinements={data.suggestedRefinements}
-                />
+          {!showLoadingScreen && (
+            <>
+              <div className="refinement-row">
+                {data && (
+                  <RefineOffers 
+                    minimal 
+                    onRefine={(needs) => { 
+                      setSelectedPlanId(null); 
+                      refine(needs); 
+                    }} 
+                    isLoading={isLoading} 
+                    merchantContext={JSON.stringify(data.merchant)}
+                    suggestedRefinements={data.suggestedRefinements}
+                    />
 
-            )}
-          </div>
+                )}
+              </div>
 
-          {data && currentUserNeeds && !isLoading && !error && !data.isFallback && (
-            <div className="refinement-banner-container">
-              <RefinementContext 
-                needs={currentUserNeeds} 
-                onClear={() => {
-                  setSelectedPlanId(null);
-                  refine(""); // Clear the needs
-                }}
-              />
-            </div>
+              {data && currentUserNeeds && !isLoading && !error && !data.isFallback && (
+                <div className="refinement-banner-container">
+                  <RefinementContext 
+                    needs={currentUserNeeds} 
+                    onClear={() => {
+                      setSelectedPlanId(null);
+                      refine(""); // Clear the needs
+                    }}
+                  />
+                </div>
+              )}
+            </>
           )}
 
           {error ? (
@@ -208,8 +219,8 @@ function App() {
               message={error} 
               onRetry={refresh} 
             />
-          ) : isApiLoading ? (
-            <QuirkyLoadingScreen />
+          ) : showLoadingScreen ? (
+            <QuirkyLoadingScreen isFinished={!isApiLoading} onComplete={() => setShowLoadingScreen(false)} />
           ) : (
             <>
               {!isLocalLoading && plans.length === 0 && !error && data && (
