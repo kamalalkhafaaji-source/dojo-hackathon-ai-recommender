@@ -1,5 +1,6 @@
 using OptimalOfferAI.Models;
 using OptimalOfferAI.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace OptimalOfferAI.Services;
 
@@ -12,11 +13,13 @@ public class OfferOrchestrator : IOfferOrchestrator
 {
     private readonly IPersonaRepository _repository;
     private readonly GeminiRecommenderService _gemini;
+    private readonly IMemoryCache _cache;
 
-    public OfferOrchestrator(IPersonaRepository repository, GeminiRecommenderService gemini)
+    public OfferOrchestrator(IPersonaRepository repository, GeminiRecommenderService gemini, IMemoryCache cache)
     {
         _repository = repository;
         _gemini = gemini;
+        _cache = cache;
     }
 
     public async Task<EnrichedRecommendationResponse?> GetEnrichedRecommendationsAsync(RecommendationsInput input)
@@ -34,7 +37,26 @@ public class OfferOrchestrator : IOfferOrchestrator
             throw new Exception($"Persona data for '{personaKey}' is missing required merchant business profile information.");
         }
 
-        var request = fixture with { UserNeeds = input.UserNeeds };
+        // Memory Cache Logic
+        List<string> contextHistory = new();
+        if (!string.IsNullOrEmpty(input.SessionId))
+        {
+            if (_cache.TryGetValue(input.SessionId, out List<string>? cachedHistory) && cachedHistory != null)
+            {
+                contextHistory = cachedHistory;
+            }
+            if (!string.IsNullOrWhiteSpace(input.UserNeeds))
+            {
+                contextHistory.Add(input.UserNeeds);
+                _cache.Set(input.SessionId, contextHistory, TimeSpan.FromHours(1));
+            }
+        }
+
+        var request = fixture with { 
+            UserNeeds = input.UserNeeds, 
+            IsELI5 = input.IsELI5,
+            ContextHistory = contextHistory.Count > 0 ? contextHistory : null 
+        };
 
         // Use more attempts for refinement requests since the user has expressed specific needs
         var isRefinement = !string.IsNullOrWhiteSpace(input.UserNeeds);
@@ -44,6 +66,7 @@ public class OfferOrchestrator : IOfferOrchestrator
 
         // If AI service fails, generate fallback recommendations based on highest funding amount
         List<Recommendation> recommendations;
+        string chainOfThought = "N/A";
         string? aiWarning = null;
 
         bool isFallback = false;
@@ -63,9 +86,11 @@ public class OfferOrchestrator : IOfferOrchestrator
         else
         {
             recommendations = result.Recommendations;
+            chainOfThought = result.ChainOfThought ?? "N/A";
         }
 
         return new EnrichedRecommendationResponse(
+            chainOfThought,
             recommendations,
             fixture.Offers.ToDictionary(o => o.OfferId),
             new MerchantSummary(
@@ -106,9 +131,10 @@ public class OfferOrchestrator : IOfferOrchestrator
             recommendations.Add(new Recommendation(
                 OfferId: offer.OfferId,
                 Rank: rank,
-                Headline: $"Funding Option {rank}: ${offer.FundingAmount:F0}",
+                Headline: $"Funding Option {rank}: £{offer.FundingAmount:F0}",
                 Reasons: reasons,
-                Tag: rank == 1 ? "Best fit" : rank == 2 ? "2nd" : "3rd"
+                Tag: rank == 1 ? "Best fit" : rank == 2 ? "2nd" : "3rd",
+                HealthScore: rank == 1 ? 85 : rank == 2 ? 75 : 65
             ));
         }
 

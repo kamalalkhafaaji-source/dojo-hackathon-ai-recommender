@@ -25,6 +25,7 @@ builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection(Gemin
 builder.Services.AddSingleton<IPersonaRepository, FileBasedPersonaRepository>();
 builder.Services.AddSingleton<GeminiRecommenderService>();
 builder.Services.AddScoped<IOfferOrchestrator, OfferOrchestrator>();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>

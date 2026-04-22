@@ -13,6 +13,8 @@ export interface Recommendation {
   rank: number;
   headline: string;
   tag?: string;
+  healthScore?: number;
+  projectedCashflow?: number[];
   reasons: string[];
 }
 
@@ -22,14 +24,39 @@ export interface MerchantSummary {
 }
 
 export interface EnrichedRecommendationResponse {
+  chainOfThought?: string;
   recommendations: Recommendation[];
   offers: Record<string, McaOffer>;
   merchant: MerchantSummary;
-  aiWarning?: string;
   isFallback: boolean;
+  aiWarning?: string;
 }
 
 export interface RecommendationsInput {
   persona?: string;
   userNeeds?: string;
+  isELI5?: boolean;
+  sessionId?: string;
+}
+
+export interface SimulateRequest {
+  offerDetails: string;
+  merchantContext: string;
+  userMessage: string;
+}
+
+export interface DeepDiveRequest {
+  reason: string;
+  offerDetails: string;
+}
+
+export interface FaqRequest {
+  offerDetails: string;
+  merchantContext: string;
+}
+
+export interface SuggestRefinementRequest {
+  merchantContext: string;
+}
+
 }

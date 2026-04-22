@@ -10,6 +10,8 @@
   --border-color: #E5E7EB;
   --input-bg: #F9FAFB;
   --btn-primary-text: #FFFFFF;
+  --tertiary-color: #6C5CE7; /* Dojo Purple */
+  --tertiary-hover: #5A4AD1;
 }
 
 body {
@@ -64,7 +66,7 @@ body {
   border: 1px solid #000000;
   color: #FFFFFF;
   padding: 14px 24px;
-  border-radius: 100px; /* Pill shape */
+  border-radius: 12px; /* Reduced from 100px */
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
@@ -89,9 +91,21 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-tertiary {
+  background-color: var(--tertiary-color);
+  border-color: var(--tertiary-color);
+  color: white;
+}
+
+.btn-tertiary:hover {
+  background-color: var(--tertiary-hover);
+  border-color: var(--tertiary-hover);
+  transform: translateY(-1px);
+}
+
 .btn-full {
   width: 100%;
-  border-radius: 100px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
 }

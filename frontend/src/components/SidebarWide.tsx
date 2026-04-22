@@ -49,7 +49,7 @@ const SidebarWide: React.FC = () => {
         .menu-item {
           padding: 10px 16px;
           margin: 0 12px;
-          border-radius: 100px;
+          border-radius: 12px;
           color: var(--text-secondary);
           font-size: 13px;
           font-weight: 500;

@@ -59,7 +59,7 @@ const SidebarNarrow: React.FC = () => {
           display: flex;
           justify-content: center;
           align-items: center;
-          border-radius: 100px;
+          border-radius: 12px;
           margin-bottom: 12px;
           color: var(--text-secondary);
           cursor: pointer;

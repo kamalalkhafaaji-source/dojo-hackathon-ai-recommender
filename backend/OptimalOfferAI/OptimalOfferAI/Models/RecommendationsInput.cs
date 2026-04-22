@@ -5,5 +5,7 @@ namespace OptimalOfferAI.Models;
 /// </summary>
 public record RecommendationsInput(
     string? Persona = null, 
-    string? UserNeeds = null
+    string? UserNeeds = null,
+    bool IsELI5 = false,
+    string? SessionId = null
 );

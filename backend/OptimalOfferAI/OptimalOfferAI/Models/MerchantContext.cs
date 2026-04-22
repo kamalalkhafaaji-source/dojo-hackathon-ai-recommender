@@ -3,7 +3,9 @@ namespace OptimalOfferAI.Models;
 public record RecommendationRequest(
     MerchantContext Merchant,
     List<McaOffer> Offers,
-    string? UserNeeds = null
+    string? UserNeeds = null,
+    bool IsELI5 = false,
+    List<string>? ContextHistory = null
 );
 
 public record MerchantContext(
